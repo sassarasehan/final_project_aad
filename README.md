@@ -94,3 +94,7 @@ Update .env:
 
 APP_API_BASE_URL=http://localhost:8080/api/v1
 STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+
+
+YOUTUBE LINK : 
