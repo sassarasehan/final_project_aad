@@ -97,4 +97,4 @@ STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 
 
 
-YOUTUBE LINK : 
+YOUTUBE LINK : https://youtu.be/RQvf7ogfCdQ
