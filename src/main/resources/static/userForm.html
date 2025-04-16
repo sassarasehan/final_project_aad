@@ -1,0 +1,947 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2, h3 {
+            color: #007BFF;
+        }
+
+        /* Form Styling */
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            width: 50%;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #333;
+            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Buttons */
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button[type="button"] {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        button.delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        button.edit {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        /* Table Styling */
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: #ffffff;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+    </style>
+</head>
+<body>
+
+<h2>User Management</h2>
+
+<form id="userForm">
+    <input type="hidden" id="uid">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="text" id="role" placeholder="Role" required>
+    <button type="button" onclick="saveUser()">Save</button>
+</form>
+
+<h3>Users List</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+</table>
+
+&lt;!&ndash;<script>
+    const apiBaseUrl = "http://localhost:8080/api/v1/user";
+
+    function fetchUsers() {
+        axios.get(`${apiBaseUrl}/get`)
+            .then(response => {
+                const users = response.data;
+                let tableRows = "";
+                users.forEach(user => {
+                    tableRows += `
+                            <tr>
+                                <td>${user.email}</td>
+                                <td>${user.name}</td>
+                                <td>${user.role}</td>
+                                <td>
+                                    <button class="edit" onclick="editUser('${user.email}', '${user.name}', '${user.role}')">Edit</button>
+                                    <button class="delete" onclick="deleteUser('${user.email}')">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                });
+                document.getElementById("userTable").innerHTML = tableRows;
+            })
+            .catch(error => console.error("Error fetching users:", error));
+    }
+
+    function saveUser() {
+        const user = {
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            name: document.getElementById("name").value,
+            role: document.getElementById("role").value
+        };
+
+        axios.post(`${apiBaseUrl}/register`, user)
+            .then(response => {
+                alert("User saved successfully!");
+                fetchUsers();
+            })
+            .catch(error => alert("Error saving user: " + error.response.data.message));
+    }
+
+    function deleteUser(email) {
+        if (confirm("Are you sure you want to delete this user?")) {
+            axios.delete(`${apiBaseUrl}/delete/${email}`)
+                .then(response => {
+                    alert("User deleted successfully!");
+                    fetchUsers();
+                })
+                .catch(error => alert("Error deleting user: " + error.response.data.message));
+        }
+    }
+
+    function editUser(email, name, role) {
+        document.getElementById("email").value = email;
+        document.getElementById("name").value = name;
+        document.getElementById("role").value = role;
+    }
+
+    fetchUsers();  // Load users on page load
+</script>&ndash;&gt;
+
+<script>
+    const apiBaseUrl = "http://localhost:8080/api/v1/user";
+    let isEditing = false;  // Track if we're updating a user
+    let email = "";  // Store the email of the user being edited
+
+    function fetchUsers() {
+        axios.get(`${apiBaseUrl}/get`)
+            .then(response => {
+                const users = response.data;
+                let tableRows = "";
+                users.forEach(user => {
+                    tableRows += `
+                        <tr>
+                            <td>${user.email}</td>
+                            <td>${user.name}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <button class="edit" onclick="editUser('${user.email}', '${user.name}', '${user.role}')">Edit</button>
+                                <button class="delete" onclick="deleteUser('${user.email}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("userTable").innerHTML = tableRows;
+            })
+            .catch(error => console.error("Error fetching users:", error));
+    }
+
+    function saveUser() {
+        if (isEditing) {
+            updateUser();
+        } else {
+            const user = {
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                name: document.getElementById("name").value,
+                role: document.getElementById("role").value
+            };
+
+            axios.post(`${apiBaseUrl}/register`, user)
+                .then(response => {
+                    alert("User saved successfully!");
+                    resetForm();
+                    fetchUsers();
+                })
+                .catch(error => alert("Error saving user: " + error.response.data.message));
+        }
+    }
+
+    function updateUser() {
+        const updatedUser = {
+            email: document.getElementById("email").value, // Keep email as it is
+            password: document.getElementById("password").value,
+            name: document.getElementById("name").value,
+            role: document.getElementById("role").value
+        };
+
+        axios.put(`${apiBaseUrl}/update/${editingEmail}`, updatedUser)
+            .then(response => {
+                alert("User updated successfully!");
+                resetForm();
+                fetchUsers();
+            })
+            .catch(error => alert("Error updating user: " + error.response.data.message));
+    }
+
+    function editUser(email, name, role) {
+        document.getElementById("email").value = email;
+        document.getElementById("name").value = name;
+        document.getElementById("role").value = role;
+        document.getElementById("password").value = "";  // Keep password empty for security
+
+        isEditing = true;
+        editingEmail = email;
+
+        // Change button to "Update"
+        document.querySelector("button[type='button']").innerText = "Update";
+        document.querySelector("button[type='button']").style.backgroundColor = "#28A745";
+    }
+
+    function deleteUser(email) {
+        if (confirm("Are you sure you want to delete this user?")) {
+            axios.delete(`${apiBaseUrl}/delete/${email}`)
+                .then(response => {
+                    alert("User deleted successfully!");
+                    fetchUsers();
+                })
+                .catch(error => alert("Error deleting user: " + error.response.data.message));
+        }
+    }
+
+    function resetForm() {
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("role").value = "";
+
+        isEditing = false;
+        editingEmail = "";
+
+        // Change button back to "Save"
+        document.querySelector("button[type='button']").innerText = "Save";
+        document.querySelector("button[type='button']").style.backgroundColor = "#007BFF";
+    }
+
+    fetchUsers();  // Load users on page load
+</script>
+
+
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e0e7ff;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header h1 i {
+            font-size: 1.8rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--dark);
+            background-color: var(--white);
+            background-clip: padding-box;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .form-control.error {
+            border-color: var(--danger);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        .table thead th {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 50px;
+        }
+
+        .badge-primary {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        /* Icons */
+        .material-icons {
+            font-size: 1.25rem;
+            vertical-align: middle;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>
+            <span class="material-icons">people_alt</span>
+            User Management
+        </h1>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>User Form</h2>
+        </div>
+        <form id="userForm">
+            <input type="hidden" id="uid">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="Enter email" required>
+                <div id="email-error" class="error-message">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                <div id="password-error" class="error-message">Password must be at least 8 characters with at least one uppercase, one lowercase, one number, and one special character</div>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" class="form-control" placeholder="Enter full name" required>
+                <div id="name-error" class="error-message">Name must be at least 2 characters</div>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Role</label>
+                <input type="text" id="role" class="form-control" placeholder="Enter role" required>
+                <div id="role-error" class="error-message">Role must be at least 2 characters</div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="validateAndSaveUser()">
+                <span class="material-icons">save</span>
+                Save
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Users List</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="userTable">
+                <tr>
+                    <td colspan="4" class="text-center">Loading users...</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiBaseUrl = "http://localhost:8080/api/v1/user";
+    let isEditing = false;
+    let editingEmail = "";
+
+    // Regular expressions for validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const nameRegex = /^[a-zA-Z\s]{2,}$/;
+    const roleRegex = /^[a-zA-Z\s]{2,}$/;
+
+    function fetchUsers() {
+        axios.get(`${apiBaseUrl}/get`)
+            .then(response => {
+                const users = response.data;
+                let tableRows = "";
+
+                if (users.length === 0) {
+                    tableRows = `<tr><td colspan="4" class="text-center">No users found</td></tr>`;
+                } else {
+                    users.forEach(user => {
+                        tableRows += `
+                                <tr>
+                                    <td>${user.email}</td>
+                                    <td>${user.name}</td>
+                                    <td><span class="badge badge-primary">${user.role}</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-warning btn-sm" onclick="editUser('${user.email}', '${user.name}', '${user.role}')">
+                                                <span class="material-icons">edit</span>
+                                                Edit
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" onclick="confirmDeleteUser('${user.email}')">
+                                                <span class="material-icons">delete</span>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                    });
+                }
+                document.getElementById("userTable").innerHTML = tableRows;
+            })
+            .catch(error => {
+                console.error("Error fetching users:", error);
+                document.getElementById("userTable").innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center">Error loading users. Please try again.</td>
+                        </tr>
+                    `;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to fetch users. Please try again.'
+                });
+            });
+    }
+
+    function validateAndSaveUser() {
+        // Get input values
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const name = document.getElementById("name").value.trim();
+        const role = document.getElementById("role").value.trim();
+
+        // Reset previous errors
+        resetErrors();
+
+        // Validate inputs
+        let isValid = true;
+
+        if (!emailRegex.test(email)) {
+            showError("email", "Please enter a valid email address");
+            isValid = false;
+        }
+
+        if (!isEditing && !passwordRegex.test(password)) {
+            showError("password", "Password must be at least 8 characters with at least one uppercase, one lowercase, one number, and one special character");
+            isValid = false;
+        }
+
+        if (!nameRegex.test(name)) {
+            showError("name", "Name must be at least 2 characters and contain only letters");
+            isValid = false;
+        }
+
+        if (!roleRegex.test(role)) {
+            showError("role", "Role must be at least 2 characters and contain only letters");
+            isValid = false;
+        }
+
+        if (isValid) {
+            if (isEditing) {
+                updateUser();
+            } else {
+                registerUser();
+            }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please fix the errors in the form',
+            });
+        }
+    }
+
+    function registerUser() {
+        const user = {
+            email: document.getElementById("email").value.trim(),
+            password: document.getElementById("password").value,
+            name: document.getElementById("name").value.trim(),
+            role: document.getElementById("role").value.trim()
+        };
+
+        axios.post(`${apiBaseUrl}/register`, user)
+            .then(response => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'User registered successfully!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                resetForm();
+                fetchUsers();
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.response?.data?.message || 'Error registering user'
+                });
+            });
+    }
+
+    function updateUser() {
+        const updatedUser = {
+            email: document.getElementById("email").value.trim(),
+            password: document.getElementById("password").value,
+            name: document.getElementById("name").value.trim(),
+            role: document.getElementById("role").value.trim()
+        };
+
+        axios.put(`${apiBaseUrl}/update/${editingEmail}`, updatedUser)
+            .then(response => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated!',
+                    text: 'User updated successfully!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                resetForm();
+                fetchUsers();
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.response?.data?.message || 'Error updating user'
+                });
+            });
+    }
+
+    function editUser(email, name, role) {
+        document.getElementById("email").value = email;
+        document.getElementById("name").value = name;
+        document.getElementById("role").value = role;
+        document.getElementById("password").value = "";
+
+        isEditing = true;
+        editingEmail = email;
+
+        // Change button to "Update"
+        const saveButton = document.querySelector("button[type='button']");
+        saveButton.innerHTML = `<span class="material-icons">update</span> Update`;
+        saveButton.className = "btn btn-success";
+
+        // Scroll to form
+        document.getElementById("userForm").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function confirmDeleteUser(email) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteUser(email);
+            }
+        });
+    }
+
+    function deleteUser(email) {
+        axios.delete(`${apiBaseUrl}/delete/${email}`)
+            .then(response => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'User has been deleted.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                fetchUsers();
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.response?.data?.message || 'Error deleting user'
+                });
+            });
+    }
+
+    function resetForm() {
+        document.getElementById("userForm").reset();
+        isEditing = false;
+        editingEmail = "";
+
+        // Change button back to "Save"
+        const saveButton = document.querySelector("button[type='button']");
+        saveButton.innerHTML = `<span class="material-icons">save</span> Save`;
+        saveButton.className = "btn btn-primary";
+
+        resetErrors();
+    }
+
+    function showError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorElement = document.getElementById(`${fieldId}-error`);
+
+        field.classList.add('error');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+
+    function resetErrors() {
+        const errorMessages = document.querySelectorAll('.error-message');
+        const errorFields = document.querySelectorAll('.error');
+
+        errorMessages.forEach(el => el.style.display = 'none');
+        errorFields.forEach(el => el.classList.remove('error'));
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchUsers();
+
+        // Add input event listeners for real-time validation
+        document.getElementById('email').addEventListener('input', function() {
+            if (!emailRegex.test(this.value.trim())) {
+                showError('email', 'Please enter a valid email address');
+            } else {
+                this.classList.remove('error');
+                document.getElementById('email-error').style.display = 'none';
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            if (!passwordRegex.test(this.value)) {
+                showError('password', 'Password must be at least 8 characters with at least one uppercase, one lowercase, one number, and one special character');
+            } else {
+                this.classList.remove('error');
+                document.getElementById('password-error').style.display = 'none';
+            }
+        });
+
+        document.getElementById('name').addEventListener('input', function() {
+            if (!nameRegex.test(this.value.trim())) {
+                showError('name', 'Name must be at least 2 characters and contain only letters');
+            } else {
+                this.classList.remove('error');
+                document.getElementById('name-error').style.display = 'none';
+            }
+        });
+
+        document.getElementById('role').addEventListener('input', function() {
+            if (!roleRegex.test(this.value.trim())) {
+                showError('role', 'Role must be at least 2 characters and contain only letters');
+            } else {
+                this.classList.remove('error');
+                document.getElementById('role-error').style.display = 'none';
+            }
+        });
+    });
+</script>
+</body>
+</html>

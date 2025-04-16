@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelEase - Your Perfect Travel Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            padding: 5px 0;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: #4CAF50;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: #4CAF50;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #4CAF50;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .hamburger:hover {
+            color: #4CAF50;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin-top: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(transparent, #f9f9f9);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 700px;
+            margin: 0 auto;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 18px 25px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-btn {
+            border-radius: 0;
+            padding: 18px 30px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        /* Stats Section */
+        .stats {
+            background-color: #4CAF50;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            padding: 20px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-text {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Featured Hotels */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            font-size: 2.5rem;
+            color: #333;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #4CAF50;
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 50px;
+            font-size: 1.1rem;
+        }
+
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .hotel-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .hotel-card:hover .hotel-image {
+            transform: scale(1.05);
+        }
+
+        .hotel-info {
+            padding: 25px;
+        }
+
+        .hotel-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .hotel-card p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .hotel-card p strong {
+            color: #444;
+        }
+
+        .hotel-rating {
+            color: #FFC107;
+            margin-bottom: 15px;
+        }
+
+        .view-all {
+            display: block;
+            text-align: center;
+            margin: 50px auto 0;
+            width: 200px;
+        }
+
+        /* Parallax Section */
+        .parallax {
+            background: url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') fixed center center;
+            background-size: cover;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .parallax:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .parallax-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .parallax h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .parallax p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background-color: #f9f9f9;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: #4CAF50;
+            opacity: 0.1;
+            font-family: serif;
+            line-height: 1;
+        }
+
+        .testimonial-content {
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #555;
+            position: relative;
+            z-index: 2;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .author-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background-color: #4CAF50;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .newsletter-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px 0 0 50px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .newsletter-form button {
+            border-radius: 0 50px 50px 0;
+            padding: 15px 30px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #222;
+            color: white;
+            padding: 80px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #4CAF50;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: #4CAF50;
+        }
+
+        .footer-col p {
+            color: #bbb;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-col ul li i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .footer-col a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover {
+            color: #4CAF50;
+        }
+
+        .social-links {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #4CAF50;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .modal h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .modal p {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .modal a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .modal a:hover {
+            text-decoration: underline;
+        }
+
+        /* Styling for the select dropdown */
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+
+        .form-group select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+
+        /* Chatbot */
+        .chatbot-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .chatbot-btn {
+            width: 60px;
+            height: 60px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .chatbot-btn:hover {
+            transform: scale(1.1);
+            background-color: #45a049;
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .chatbot-window.active {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .chatbot-header {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .chatbot-close {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        /* Enhanced Chatbot Styles */
+        .bot-message {
+            background: white;
+            border-radius: 0 15px 15px 15px;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message {
+            background: #4CAF50;
+            color: white;
+            border-radius: 15px 0 15px 15px;
+            align-self: flex-end;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .chatbot-input button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .typing-indicator {
+            display: flex;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 0 15px 15px 15px;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation: typingAnimation 1s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation: typingAnimation 1s infinite 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation: typingAnimation 1s infinite 0.4s;
+        }
+
+        @keyframes typingAnimation {
+            0% { opacity: 0.4; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-3px); }
+            100% { opacity: 0.4; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px 0;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                margin: 10px 20px;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .search-box {
+                flex-direction: column;
+                border-radius: 30px;
+                overflow: visible;
+            }
+
+            .search-box input {
+                border-radius: 30px;
+                margin-bottom: 10px;
+            }
+
+            .search-btn {
+                border-radius: 30px;
+            }
+
+            .section {
+                padding: 70px 0;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-form input {
+                border-radius: 30px;
+                margin-bottom: 10px;
+            }
+
+            .newsletter-form button {
+                border-radius: 30px;
+            }
+
+            .chatbot-window {
+                width: 300px;
+                height: 400px;
+                right: -20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .hotels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                min-width: 150px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .chatbot-window {
+                width: 280px;
+                right: -40px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="container">
+        <a href="index.html" class="logo"><i class="fas fa-plane"></i>Travel<span>Ease</span></a>
+        <div class="nav-links">
+            <a href="#hotels">Hotels</a>
+            <a href="#features">Features</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="taxiBooking.html">Taxis</a>
+            <a href="tourPackageBooking.html">Tour Package</a>
+            <a href="bookings.html" id="myBookingsLink">My Bookings</a>
+            <button class="btn" id="authBtn">Login</button>
+        </div>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Discover Your Perfect Getaway</h1>
+            <p>Experience luxury accommodations with our hand-picked selection of premium hotels around the world</p>
+            <div class="search-box">
+                <input type="text" placeholder="Search destinations..." id="searchInput">
+                <button class="btn search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="container">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">500+</div>
+                <div class="stat-text">Premium Hotels</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-text">Countries</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1M+</div>
+                <div class="stat-text">Happy Travelers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-text">Support</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Hotels -->
+<section id="hotels" class="section">
+    <div class="container">
+        <h2 class="section-title">Featured Hotels</h2>
+        <p class="section-subtitle">Explore our curated selection of premium hotels that offer exceptional comfort and service</p>
+        <div class="hotels-grid" id="hotels-container">
+            <!-- Hotels will be loaded here via JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="section bg-light">
+    <div class="container">
+        <h2 class="section-title">Why Choose TravelEase</h2>
+        <p class="section-subtitle">We provide everything you need for a perfect stay</p>
+        <div class="hotels-grid">
+            <div class="hotel-card">
+                <div class="hotel-info">
+                    <i class="fas fa-hotel" style="font-size: 2.5rem; color: #4CAF50; margin-bottom: 15px;"></i>
+                    <h3>Best Price Guarantee</h3>
+                    <p>We guarantee the best prices for your hotel stays. Found a better deal? We'll match it!</p>
+                </div>
+            </div>
+            <div class="hotel-card">
+                <div class="hotel-info">
+                    <i class="fas fa-concierge-bell" style="font-size: 2.5rem; color: #4CAF50; margin-bottom: 15px;"></i>
+                    <h3>24/7 Customer Support</h3>
+                    <p>Our dedicated support team is available around the clock to assist you with any queries.</p>
+                </div>
+            </div>
+            <div class="hotel-card">
+                <div class="hotel-info">
+                    <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: #4CAF50; margin-bottom: 15px;"></i>
+                    <h3>Secure Booking</h3>
+                    <p>Your personal and payment information is protected with our secure booking system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Parallax Section -->
+<section class="parallax">
+    <div class="container">
+        <div class="parallax-content">
+            <h2>Luxury Awaits You</h2>
+            <p>Discover the world's most luxurious hotels and resorts, handpicked for your ultimate comfort and satisfaction.</p>
+            <button class="btn btn-outline">Explore Now</button>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" class="section">
+    <div class="container">
+        <h2 class="section-title">What Our Guests Say</h2>
+        <p class="section-subtitle">Hear from travelers who have experienced our services</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "TravelEase made my vacation planning so easy! The hotel was exactly as described and the booking process was seamless. Will definitely use again!"
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah J." class="author-avatar">
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>New York, USA</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "I was impressed by the quality of hotels available on TravelEase. The customer service is outstanding and helped me find the perfect place for my family."
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Michael T." class="author-avatar">
+                    <div class="author-info">
+                        <h4>Michael Thompson</h4>
+                        <p>London, UK</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "The best hotel booking platform I've used. The prices are competitive and the selection is amazing. Highly recommend for any traveler!"
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Priya K." class="author-avatar">
+                    <div class="author-info">
+                        <h4>Priya Kumar</h4>
+                        <p>Mumbai, India</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter">
+    <div class="container">
+        <h2 class="section-title">Stay Updated</h2>
+        <p class="section-subtitle">Subscribe to our newsletter for exclusive deals and travel tips</p>
+        <form class="newsletter-form" id="newsletter-form">
+            <input type="email" id="user_email" name="user_email" placeholder="Enter your email" required>
+            <button type="submit" class="btn">Subscribe</button>
+        </form>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>TravelEase</h3>
+                <p>Your one-stop solution for all travel needs. Book hotels with ease and enjoy premium service.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#hotels">Hotels</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="bookings.html">My Bookings</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-phone"></i> +94 76 123 4567</li>
+                    <li><i class="fas fa-envelope"></i> info@travelease.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Main St, Colombo, Sri Lanka</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 TravelEase. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal" id="login-modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal" id="register-modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Register</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="reg-name">Full Name</label>
+                <input type="text" id="reg-name" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-phone">Phone Number</label>
+                <input type="tel" id="reg-phone" required>
+            </div>
+            <div class="form-group">
+                <label for="signupRole">Select User</label>
+                <select id="signupRole" required>
+                    <option value="" disabled selected>Select User Type</option>
+                    <option value="USER">User</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
+        <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+    </div>
+</div>
+
+<!-- Chatbot -->
+<div class="chatbot-container">
+    <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+            <h3>TravelEase Assistant</h3>
+            <span class="chatbot-close" id="chatbotClose">&times;</span>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot-message">
+                Hello! I'm your TravelEase assistant. How can I help with your travel plans today?
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" placeholder="Type your message..." id="chatbotInput">
+            <button id="chatbotSend"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <div class="chatbot-btn" id="chatbotBtn">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Initialize EmailJS
+    (function() {
+        emailjs.init("pYgNfUOuj3l8ITfmY");
+    })();
+
+    // Constants
+    const BASE_URL = "http://localhost:8080/api/v1";
+
+    // DOM Elements
+    const authBtn = document.getElementById('authBtn');
+    const loginModal = document.getElementById('login-modal');
+    const registerModal = document.getElementById('register-modal');
+    const showRegister = document.getElementById('show-register');
+    const showLogin = document.getElementById('show-login');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchInput');
+    const chatbotBtn = document.getElementById('chatbotBtn');
+    const chatbotWindow = document.getElementById('chatbotWindow');
+    const chatbotClose = document.getElementById('chatbotClose');
+    const chatbotMessages = document.getElementById('chatbotMessages');
+    const chatbotInput = document.getElementById('chatbotInput');
+    const chatbotSend = document.getElementById('chatbotSend');
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', initializeApp);
+    hamburger.addEventListener('click', toggleMobileMenu);
+    authBtn.addEventListener('click', handleAuthButtonClick);
+    showRegister.addEventListener('click', showRegisterModal);
+    showLogin.addEventListener('click', showLoginModal);
+    closeModalBtns.forEach(btn => btn.addEventListener('click', closeModals));
+    window.addEventListener('click', handleOutsideModalClick);
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    document.getElementById('register-form').addEventListener('submit', handleRegister);
+    document.getElementById('newsletter-form').addEventListener('submit', handleNewsletterSubmit);
+    searchBtn.addEventListener('click', handleSearch);
+    chatbotBtn.addEventListener('click', toggleChatbot);
+    chatbotClose.addEventListener('click', () => chatbotWindow.classList.remove('active'));
+    chatbotSend.addEventListener('click', sendChatbotMessage);
+    chatbotInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendChatbotMessage();
+    });
+
+    // Initialize Application
+    function initializeApp() {
+        checkAuthStatus();
+        loadHotels();
+
+        // Initialize chatbot welcome message
+        setTimeout(() => {
+            addChatbotMessage("Welcome to TravelEase! I'm here to help you find the perfect hotel for your next trip. How can I assist you today?", false);
+        }, 1500);
+    }
+
+    // Toggle Mobile Menu
+    function toggleMobileMenu() {
+        navLinks.classList.toggle('active');
+    }
+
+    // Handle Auth Button Click
+    function handleAuthButtonClick() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            Swal.fire({
+                title: 'Logout',
+                text: 'Are you sure you want to logout?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, logout',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    checkAuthStatus();
+                    Swal.fire('Logged out!', 'You have been successfully logged out.', 'success');
+                }
+            });
+        } else {
+            loginModal.style.display = 'flex';
+        }
+    }
+
+    // Show Register Modal
+    function showRegisterModal(e) {
+        e.preventDefault();
+        loginModal.style.display = 'none';
+        registerModal.style.display = 'flex';
+    }
+
+    // Show Login Modal
+    function showLoginModal(e) {
+        e.preventDefault();
+        registerModal.style.display = 'none';
+        loginModal.style.display = 'flex';
+    }
+
+    // Close All Modals
+    function closeModals() {
+        loginModal.style.display = 'none';
+        registerModal.style.display = 'none';
+    }
+
+    // Handle Outside Modal Click
+    function handleOutsideModalClick(e) {
+        if (e.target === loginModal) loginModal.style.display = 'none';
+        if (e.target === registerModal) registerModal.style.display = 'none';
+    }
+
+    // Handle Login Form Submission
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        fetch(`${BASE_URL}/auth/authenticate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 201) {
+                    const authData = body.data;
+                    localStorage.setItem('token', authData.token);
+                    localStorage.setItem('user', JSON.stringify(authData));
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful!',
+                        text: 'You are now logged in.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        checkAuthStatus();
+                        checkUserRole();
+                        closeModals();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: body.message || 'Login failed. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Login Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred during login',
+                    confirmButtonText: 'OK'
+                });
+            });
+    }
+
+    // Check User Role
+    function checkUserRole() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Unauthorized: Please log in.");
+            return;
+        }
+
+        function checkRole(url, successCallback, failureCallback) {
+            fetch(`${BASE_URL}/admin/${url}`, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+                .then(res => res.ok ? successCallback() : failureCallback())
+                .catch(() => failureCallback());
+        }
+
+        checkRole("test1",
+            () => window.location.href = "adminDashBoard.html",
+            () => {
+                checkRole("test2",
+                    () => window.location.href = "index.html",
+                    () => {
+                        checkRole("test3",
+                            () => window.location.href = "user-dashboard.html",
+                            () => alert("Unauthorized: Access denied.")
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+    // Handle Register Form Submission
+    async function handleRegister(e) {
+        e.preventDefault();
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+        const phone = document.getElementById('reg-phone').value;
+        const role = document.getElementById('signupRole').value;
+
+        try {
+            const response = await fetch(`${BASE_URL}/user/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, phone, role })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registration Successful!',
+                    text: 'Please login with your credentials.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    registerModal.style.display = 'none';
+                    loginModal.style.display = 'flex';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registration Failed',
+                    text: data.message || 'Registration failed. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred during registration',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    // Handle Newsletter Submission
+    function handleNewsletterSubmit(e) {
+        e.preventDefault();
+        const user_email = document.getElementById('user_email').value;
+
+        emailjs.send("service_ixd0sqf", "template_v7rl8pj", { user_email })
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thank You!',
+                    text: 'You have been subscribed to our newsletter.',
+                    confirmButtonText: 'OK'
+                });
+                e.target.reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to subscribe. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            });
+    }
+
+    // Check Authentication Status
+    function checkAuthStatus() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            authBtn.textContent = 'Logout';
+            document.getElementById('myBookingsLink').style.display = 'block';
+        } else {
+            authBtn.textContent = 'Login';
+            document.getElementById('myBookingsLink').style.display = 'none';
+        }
+    }
+
+    // Handle Search
+    function handleSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+            filterContent(query);
+        } else {
+            loadHotels();
+        }
+    }
+
+    // Filter Content
+    function filterContent(query) {
+        const searchTerm = query.toLowerCase();
+        const hotelCards = document.querySelectorAll('.hotel-card');
+
+        hotelCards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+        });
+    }
+
+    // Fetch Hotels
+    async function getHotels() {
+        try {
+            const res = await fetch(`${BASE_URL}/hotels/get`);
+            return await res.json();
+        } catch (e) {
+            console.error("Error fetching hotels:", e);
+            return [];
+        }
+    }
+
+    // Load Hotels
+    async function loadHotels() {
+        const hotels = await getHotels();
+        const container = document.getElementById("hotels-container");
+        container.innerHTML = "";
+
+        if (hotels.length === 0) {
+            container.innerHTML = '<p>No hotels available at the moment.</p>';
+            return;
+        }
+
+        hotels.forEach(hotel => {
+            container.innerHTML += `
+                <div class="hotel-card">
+                    <img src="http://localhost:8080/api/v1/hotels/images/${hotel.image}"
+                         alt="Image of ${hotel.name || 'Hotel'}" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3>${hotel.name || 'Unnamed Hotel'}</h3>
+                        <div class="hotel-rating">
+                            ${'<i class="fas fa-star"></i>'.repeat(Math.min(5, Math.floor(hotel.rating || 4)))}
+                            ${'<i class="far fa-star"></i>'.repeat(Math.max(0, 5 - Math.floor(hotel.rating || 4)))}
+                        </div>
+                        <p><strong>Address:</strong> ${hotel.address || 'Colombo, Sri Lanka'}</p>
+                        <p><strong>Phone:</strong> ${hotel.phoneNumber || '+94 76 123 4567'}</p>
+                        <button class="btn book-btn" onclick="viewHotelRooms('${hotel.hotelId}', '${hotel.name || 'Hotel'}')">
+                            View Rooms
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // View Hotel Rooms
+    function viewHotelRooms(hotelId, hotelName) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please login to view hotel rooms',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                loginModal.style.display = 'flex';
+            });
+            return;
+        }
+
+        sessionStorage.setItem('currentHotel', JSON.stringify({
+            id: hotelId,
+            name: hotelName
+        }));
+        window.location.href = 'rooms.html';
+    }
+
+    // Chatbot Functions
+    function toggleChatbot() {
+        chatbotWindow.classList.toggle('active');
+    }
+
+    function addChatbotMessage(content, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', isUser ? 'user-message' : 'bot-message');
+        messageDiv.textContent = content;
+        chatbotMessages.appendChild(messageDiv);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.classList.add('typing-indicator');
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        typingDiv.id = 'typingIndicator';
+        chatbotMessages.appendChild(typingDiv);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+        const typing = document.getElementById('typingIndicator');
+        if (typing) typing.remove();
+    }
+
+    function getAIResponse(prompt) {
+        showTypingIndicator();
+
+        return new Promise(resolve => {
+            setTimeout(() => {
+                hideTypingIndicator();
+                const lowerPrompt = prompt.toLowerCase();
+
+                if (lowerPrompt.includes('hello') || lowerPrompt.includes('hi')) {
+                    resolve("Hello! I'm your TravelEase assistant. How can I help with your travel plans today?");
+                } else if (lowerPrompt.includes('hotel') || lowerPrompt.includes('book')) {
+                    resolve("We have many hotels available. You can check them out by going to our hotels page. Could you tell me your destination and travel dates?");
+                } else if (lowerPrompt.includes('price') || lowerPrompt.includes('cost')) {
+                    resolve("Prices vary by hotel and season. Our luxury hotels typically range from $150-$500 per night.");
+                } else if (lowerPrompt.includes('taxi') || lowerPrompt.includes('car')) {
+                    resolve("We offer taxi services. You can book them on our taxis page.");
+                } else if (lowerPrompt.includes('tour') || lowerPrompt.includes('package')) {
+                    resolve("We have exciting tour packages available. Check them out on our tours page.");
+                } else if (lowerPrompt.includes('thank')) {
+                    resolve("You're welcome! Is there anything else I can help with?");
+                } else if (lowerPrompt.includes('help') || lowerPrompt.includes('support')) {
+                    resolve("Our support team is available 24/7. You can call +94 76 123 4567 or email support@travelease.com");
+                } else {
+                    resolve("I'm here to help with your travel plans. Could you tell me more about what you need?");
+                }
+            }, 1000);
+        });
+    }
+
+    async function sendChatbotMessage() {
+        const message = chatbotInput.value.trim();
+        if (message) {
+            addChatbotMessage(message, true);
+            chatbotInput.value = '';
+
+            const response = await getAIResponse(message);
+            addChatbotMessage(response, false);
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Rooms - TravelEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS with your user ID
+        (function() {
+            emailjs.init("pYgNfUOuj3l8ITfmY"); // Replace with your actual EmailJS user ID
+        })();
+    </script>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --light: #f9f9f9;
+            --dark: #333;
+            --gray: #666;
+            --light-gray: #eee;
+            --white: #fff;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+            --border-radius-sm: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
+            url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Rooms Section */
+        .rooms-section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: var(--secondary);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .room-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .room-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .room-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .room-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .room-info {
+            padding: 1.8rem;
+        }
+
+        .room-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--secondary);
+        }
+
+        .room-meta {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-meta i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .room-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.2rem 0;
+        }
+
+        .room-feature {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .room-feature i {
+            font-size: 0.7rem;
+        }
+
+        .room-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1.2rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .room-price small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--gray);
+        }
+
+        /* Alert */
+        .alert-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: var(--border-radius-sm);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success i {
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .book-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: var(--border-radius-sm);
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 650px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalopen 0.4s ease-out;
+            position: relative;
+        }
+
+        @keyframes modalopen {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .close {
+            color: var(--gray);
+            font-size: 1.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            padding: 0 10px;
+        }
+
+        .close:hover {
+            color: var(--dark);
+            transform: rotate(90deg);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--light);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            background-color: var(--white);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+
+        /* Payment Section */
+        .payment-section {
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .payment-section .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+            text-align: left;
+            display: block;
+            left: 0;
+            transform: none;
+        }
+
+        .payment-section .section-title::after {
+            left: 0;
+            transform: none;
+            width: 50px;
+        }
+
+        #card-element {
+            padding: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1rem;
+            background: var(--light);
+            transition: var(--transition);
+        }
+
+        #card-element.StripeElement--focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            background: var(--white);
+        }
+
+        #card-errors {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: var(--border-radius-sm);
+            background-color: rgba(231, 76, 60, 0.1);
+            display: none;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Modal */
+        .success-modal .modal-content {
+            text-align: center;
+            padding: 3rem 2.5rem;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-30px);}
+            60% {transform: translateY(-15px);}
+        }
+
+        .success-message {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--gray);
+            line-height: 1.8;
+        }
+
+        .booking-id {
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 1.5rem 0;
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: var(--border-radius-sm);
+            font-size: 1.1rem;
+            border: 1px dashed var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                height: 50vh;
+                margin-top: 60px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                padding: 1.8rem;
+                width: 95%;
+            }
+
+            .room-card img {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar .container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .rooms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-hotel"></i>
+            Travel<span>Ease</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#hotels">Hotels</a>
+            <a href="taxiBooking.html">Taxis</a>
+            <a href="tourPackageBooking.html">Tours</a>
+            <a href="bookings.html" id="myBookingsLink">My Bookings</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 id="hotel-name">Luxury Hotel Rooms</h1>
+            <p>Experience unparalleled comfort and service in our exquisite accommodations</p>
+        </div>
+    </div>
+</section>
+
+<!-- Rooms Section -->
+<section class="rooms-section">
+    <div class="container">
+        <h2 class="section-title" id="rooms-title">Available Rooms</h2>
+        <div class="rooms-grid" id="rooms-container">
+            <!-- Rooms will be loaded here dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Book Your Room</h2>
+            <button class="close">&times;</button>
+        </div>
+
+        <form id="bookingForm">
+            <input type="hidden" id="roomId">
+            <input type="hidden" id="hotelId">
+
+            <div class="form-group">
+                <label for="guestEmail">Email Address</label>
+                <input type="email" id="guestEmail" class="form-control" required
+                       placeholder="your.email@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="guestName">Full Name</label>
+                <input type="text" id="guestName" class="form-control" required
+                       placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="guestPhone">Phone Number</label>
+                <input type="tel" id="guestPhone" class="form-control" required
+                       placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="checkInDate">Check-in Date</label>
+                    <input type="date" id="checkInDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkOutDate">Check-out Date</label>
+                    <input type="date" id="checkOutDate" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="guestCount">Number of Guests</label>
+                <select id="guestCount" class="form-control" required>
+                    <option value="" disabled selected>Select number of guests</option>
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                </select>
+            </div>
+
+            <div class="payment-section">
+                <h3 class="section-title">Payment Information</h3>
+                <div id="card-element"></div>
+                <div id="card-errors" role="alert"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Total Amount</label>
+                <input type="text" id="amount" class="form-control" readonly>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%;">
+                <i class="fas fa-credit-card"></i> Complete Booking
+            </button>
+            <div class="spinner" id="loadingSpinner"></div>
+        </form>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal success-modal">
+    <div class="modal-content">
+        <button class="close">&times;</button>
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2 class="modal-title">Booking Confirmed!</h2>
+        <p class="success-message">Your room has been successfully booked. A confirmation has been sent to your email.</p>
+        <p>Booking Reference:</p>
+        <div class="booking-id" id="bookingIdDisplay"></div>
+        <button class="btn" onclick="closeSuccessModal()">
+            <i class="fas fa-check"></i> Done
+        </button>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // Configuration
+    const BASE_URL = "http://localhost:8080/api/v1";
+    const stripe = Stripe('pk_test_51RDG7SFdrHPhbYtgQCnxE0qu5sRxQfbpYt6W21HMiSvMtQOnNllgkL7QYABFoPe5AsWjqUYjfH7clhq8Eaz6tvcN00XRAzQim2');
+
+    // Initialize Stripe Elements
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                fontFamily: '"Poppins", sans-serif',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#e74c3c',
+                iconColor: '#e74c3c'
+            }
+        }
+    });
+
+    // State management
+    let currentRoom = null;
+
+    // DOM Elements
+    const roomsContainer = document.getElementById('rooms-container');
+    const bookingForm = document.getElementById('bookingForm');
+    const bookingModal = document.getElementById('bookingModal');
+    const successModal = document.getElementById('successModal');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorDisplay = document.getElementById('card-errors');
+    const hotelNameElement = document.getElementById('hotel-name');
+
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Fetch available rooms for the selected hotel
+    async function getRoomsByHotel(hotelId) {
+        try {
+            const response = await fetch(`${BASE_URL}/rooms/rooms/${hotelId}?available=available`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching rooms:", "not available rooms this time");
+            showError('Failed to load rooms. Please try again later.');
+            return [];
+        }
+    }
+
+    // Display rooms in the UI
+    async function loadRooms() {
+        try {
+            const hotel = JSON.parse(sessionStorage.getItem('currentHotel'));
+
+            if (!hotel || !hotel.id) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update UI with hotel name
+            hotelNameElement.textContent = `${hotel.name} - Available Rooms`;
+
+            // Show loading state
+            roomsContainer.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Loading rooms...</p>';
+
+            const rooms = await getRoomsByHotel(hotel.id);
+
+            if (rooms.length === 0) {
+                roomsContainer.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No rooms available for this hotel at the moment.</p>';
+                return;
+            }
+
+            // Clear and render rooms
+            roomsContainer.innerHTML = '';
+
+            rooms.forEach(room => {
+                const roomCard = document.createElement('div');
+                roomCard.className = 'room-card';
+
+                roomCard.innerHTML = `
+                    <img src="../static/${room.image}" alt="${room.roomType} Room" />
+                    <div class="room-info">
+                        <h3>${room.roomType} Room</h3>
+                        <div class="room-meta">
+                            <i class="fas fa-door-open"></i>
+                            <span>Room #${room.roomId}</span>
+                            <i class="fas fa-user-friends"></i>
+                            <span>Max Guests: ${room.maxGuests}</span>
+                        </div>
+
+                        ${room.amenities ? `
+                        <div class="room-features">
+                            ${room.amenities.split(',').map(amenity =>
+                    `<span class="room-feature">
+                                    <i class="fas fa-check"></i>
+                                    ${amenity.trim()}
+                                </span>`
+                ).join('')}
+                        </div>` : ''}
+
+                        <div class="room-price">
+                            LKR${room.price.toLocaleString()} <small>/ night</small>
+                            <button class="btn book-btn"
+                                    data-room-id="${room.roomId}"
+                                    data-hotel-id="${room.hotel.hotelId}"
+                                    data-price="${room.price}"
+                                    data-room-type="${room.roomType}">
+                                <i class="fas fa-calendar-check"></i> Book Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                roomsContainer.appendChild(roomCard);
+            });
+
+            // Add event listeners to all book buttons
+            document.querySelectorAll('.book-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const roomId = e.target.dataset.roomId;
+                    const hotelId = e.target.dataset.hotelId;
+                    const price = parseFloat(e.target.dataset.price);
+                    const roomType = e.target.dataset.roomType;
+
+                    openBookingModal(roomId, hotelId, price, roomType);
+                });
+            });
+
+        } catch (error) {
+            console.error('Error loading rooms:', error);
+            showError('Failed to load room information. Please refresh the page.');
+        }
+    }
+
+    // Open booking modal with room details
+    function openBookingModal(roomId, hotelId, price, roomType) {
+        currentRoom = {
+            roomId,
+            hotelId,
+            price,
+            roomType
+        };
+
+        // Set hidden fields
+        document.getElementById('roomId').value = roomId;
+        document.getElementById('hotelId').value = hotelId;
+
+        // Set date constraints (today as minimum)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkInDate').min = today;
+        document.getElementById('checkOutDate').min = today;
+
+        // Clear previous values
+        document.getElementById('guestEmail').value = '';
+        document.getElementById('guestName').value = '';
+        document.getElementById('guestPhone').value = '';
+        document.getElementById('checkInDate').value = '';
+        document.getElementById('checkOutDate').value = '';
+        document.getElementById('guestCount').value = '';
+        document.getElementById('amount').value = '';
+        errorDisplay.textContent = '';
+        errorDisplay.style.display = 'none';
+
+        // Mount Stripe card element
+        cardElement.mount('#card-element');
+
+        // Show modal
+        bookingModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close modals when clicking the × button
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            // Close both modals (they'll check their own visibility)
+            bookingModal.style.display = 'none';
+            successModal.style.display = 'none';
+            cardElement.unmount(); // Clean up Stripe element
+            document.body.style.overflow = 'auto';
+        });
+    });
+
+    // Close modals when clicking outside content
+    window.addEventListener('click', function(event) {
+        if (event.target === bookingModal) {
+            bookingModal.style.display = 'none';
+            cardElement.unmount();
+            document.body.style.overflow = 'auto';
+        }
+        if (event.target === successModal) {
+            successModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // Close success modal
+    function closeSuccessModal() {
+        successModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Calculate booking amount based on dates
+    document.getElementById("checkInDate").addEventListener("change", calculateAmount);
+    document.getElementById("checkOutDate").addEventListener("change", calculateAmount);
+
+    function calculateAmount() {
+        const checkIn = document.getElementById("checkInDate").value;
+        const checkOut = document.getElementById("checkOutDate").value;
+
+        if (checkIn && checkOut && currentRoom) {
+            const startDate = new Date(checkIn);
+            const endDate = new Date(checkOut);
+
+            // Calculate difference in days
+            const timeDiff = endDate.getTime() - startDate.getTime();
+            const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            // Ensure days is at least 1
+            const numberOfNights = days > 0 ? days : 1;
+            const amount = numberOfNights * currentRoom.price;
+
+            // Update the amount field
+            document.getElementById("amount").value = `LKR ${amount.toLocaleString()} (${numberOfNights} night${numberOfNights > 1 ? 's' : ''})`;
+            return amount;
+        }
+        return 0;
+    }
+
+    // Show error message
+    function showError(message, element = errorDisplay) {
+        console.log('Attempting to show error:', message);
+        element.textContent = message;
+        element.style.display = 'block';
+    }
+
+    // Show success alert
+    function showSuccessAlert(message) {
+        const alert = document.createElement('div');
+        alert.className = 'alert-success';
+        alert.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        document.body.appendChild(alert);
+
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
+    }
+
+    /*// Handle form submission
+    bookingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form elements
+        const submitButton = bookingForm.querySelector('button[type="submit"]');
+        const guestEmail = document.getElementById('guestEmail').value.trim();
+        const guestName = document.getElementById('guestName').value.trim();
+        const guestPhone = document.getElementById('guestPhone').value.trim();
+        const checkInDate = document.getElementById('checkInDate').value;
+        const checkOutDate = document.getElementById('checkOutDate').value;
+        const guestCount = document.getElementById('guestCount').value;
+
+        // Show loading state
+        submitButton.disabled = true;
+        loadingSpinner.style.display = 'block';
+        errorDisplay.textContent = '';
+        errorDisplay.style.display = 'none';
+
+        try {
+            // 1. Calculate the amount
+            const amount = calculateAmount();
+            if (amount <= 0) {
+                showError('Please select valid dates', errorDisplay);
+                return;
+            }
+
+            // 2. Check if email exists
+            const emailCheckResponse = await fetch(`${BASE_URL}/user/check-email?email=${encodeURIComponent(guestEmail)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!emailCheckResponse.ok) {
+                const error = await emailCheckResponse.json().catch(() => ({ message: 'Email verification failed' }));
+                throw new Error(error.message || 'Email verification failed');
+            }
+
+            const emailExists = await emailCheckResponse.json();
+            if (!emailExists) {
+                throw new Error('This email is not registered. Please sign up first.');
+            }
+
+            // 3. Create booking
+            const bookingPayload = {
+                userEmail: guestEmail,
+                bookingType: "ROOM",
+                roomId: currentRoom.roomId,
+                hotelId: currentRoom.hotelId,
+                startDate: checkInDate + "T00:00:00",
+                endDate: checkOutDate + "T00:00:00",
+                guestCount: parseInt(guestCount),
+                amount: amount
+            };
+
+            const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(bookingPayload)
+            });
+
+            if (!bookingResponse.ok) {
+                const errorText = await bookingResponse.text();
+                throw new Error(errorText || 'Failed to create booking');
+            }
+
+            const booking = await bookingResponse.json();
+
+            // 4. Create payment intent
+            const paymentAmount = Math.round(amount * 100);
+            const paymentIntentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    amount: paymentAmount,
+                    currency: 'lkr',
+                    receipt_email: guestEmail,
+                    metadata: { bookingId: booking.bookingId }
+                })
+            });
+
+            if (!paymentIntentResponse.ok) {
+                throw new Error('Failed to create payment intent');
+            }
+
+            const paymentIntentData = await paymentIntentResponse.json();
+
+            // 5. Confirm payment with Stripe
+            const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
+                paymentIntentData.clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: guestName,
+                            email: guestEmail,
+                            phone: guestPhone
+                        }
+                    }
+                }
+            );
+
+            if (stripeError) throw stripeError;
+
+            // 6. Confirm booking with payment
+            const paymentDTO = {
+                amount: amount,
+                paymentMethod: "STRIPE",
+                transactionId: paymentIntent.id,
+                status: "COMPLETED"
+            };
+
+            const confirmResponse = await fetch(`${BASE_URL}/bookings/${booking.bookingId}/confirm`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(paymentDTO)
+            });
+
+            if (!confirmResponse.ok) {
+                throw new Error('Failed to confirm booking');
+            }
+
+            // Show success
+            document.getElementById('bookingIdDisplay').textContent = booking.bookingId;
+            bookingModal.style.display = 'none';
+            successModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            // Update room availability
+            await fetch(`${BASE_URL}/rooms/${currentRoom.roomId}/mark-unavailable`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            // Show success alert
+            showSuccessAlert('Room booked successfully!');
+
+        } catch (error) {
+            console.error('Booking error:', error);
+            showError(error.message || 'Booking failed. Please try again.', errorDisplay);
+
+            // Attempt to cancel booking if it was created
+            if (booking && booking.bookingId) {
+                try {
+                    await fetch(`${BASE_URL}/bookings/${booking.bookingId}/cancel`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                } catch (cancelError) {
+                    console.error("Failed to cancel booking:", cancelError);
+                }
+            }
+        } finally {
+            submitButton.disabled = false;
+            loadingSpinner.style.display = 'none';
+        }
+    });*/
+
+    bookingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form elements
+        const submitButton = bookingForm.querySelector('button[type="submit"]');
+        const guestEmail = document.getElementById('guestEmail').value.trim();
+        const guestName = document.getElementById('guestName').value.trim();
+        const guestPhone = document.getElementById('guestPhone').value.trim();
+        const checkInDate = document.getElementById('checkInDate').value;
+        const checkOutDate = document.getElementById('checkOutDate').value;
+        const guestCount = document.getElementById('guestCount').value;
+
+        // Show loading state
+        submitButton.disabled = true;
+        loadingSpinner.style.display = 'block';
+        errorDisplay.textContent = '';
+        errorDisplay.style.display = 'none';
+
+        try {
+            // 1. Calculate the amount
+            const amount = calculateAmount();
+            if (amount <= 0) {
+                showError('Please select valid dates', errorDisplay);
+                return;
+            }
+
+            // 2. Check if email exists
+            const emailCheckResponse = await fetch(`${BASE_URL}/user/check-email?email=${encodeURIComponent(guestEmail)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!emailCheckResponse.ok) {
+                const error = await emailCheckResponse.json().catch(() => ({ message: 'Email verification failed' }));
+                throw new Error(error.message || 'Email verification failed');
+            }
+
+            const emailExists = await emailCheckResponse.json();
+            if (!emailExists) {
+                throw new Error('This email is not registered. Please sign up first.');
+            }
+
+            // 3. Create booking
+            const bookingPayload = {
+                userEmail: guestEmail,
+                bookingType: "ROOM",
+                roomId: currentRoom.roomId,
+                hotelId: currentRoom.hotelId,
+                startDate: checkInDate + "T00:00:00",
+                endDate: checkOutDate + "T00:00:00",
+                guestCount: parseInt(guestCount),
+                amount: amount
+            };
+
+            const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(bookingPayload)
+            });
+
+            if (!bookingResponse.ok) {
+                const errorText = await bookingResponse.text();
+                throw new Error(errorText || 'Failed to create booking');
+            }
+
+            const booking = await bookingResponse.json();
+
+            // 4. Create payment intent
+            const paymentAmount = Math.round(amount * 100);
+            const paymentIntentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    amount: paymentAmount,
+                    currency: 'lkr',
+                    receipt_email: guestEmail,
+                    metadata: { bookingId: booking.bookingId }
+                })
+            });
+
+            if (!paymentIntentResponse.ok) {
+                throw new Error('Failed to create payment intent');
+            }
+
+            const paymentIntentData = await paymentIntentResponse.json();
+
+            // 5. Confirm payment with Stripe
+            const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
+                paymentIntentData.clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: guestName,
+                            email: guestEmail,
+                            phone: guestPhone
+                        }
+                    }
+                }
+            );
+
+            if (stripeError) throw stripeError;
+
+            // 6. Confirm booking with payment
+            const paymentDTO = {
+                amount: amount,
+                paymentMethod: "STRIPE",
+                transactionId: paymentIntent.id,
+                status: "COMPLETED"
+            };
+
+            const confirmResponse = await fetch(`${BASE_URL}/bookings/${booking.bookingId}/confirm`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(paymentDTO)
+            });
+
+            if (!confirmResponse.ok) {
+                throw new Error('Failed to confirm booking');
+            }
+
+            // 7. Send confirmation email
+            try {
+                const emailParams = {
+                    to_email: guestEmail,
+                    to_name: guestName,
+                    from_name: "TravelEase",
+                    booking_id: booking.bookingId,
+                    room_type: currentRoom.roomType,
+                    hotel_name: document.getElementById('hotel-name').textContent.replace(' - Available Rooms', ''),
+                    check_in: checkInDate,
+                    check_out: checkOutDate,
+                    amount: `LKR ${amount.toFixed(2)}`,
+                    guest_count: guestCount
+                };
+
+                await emailjs.send(
+                    "service_ixd0sqf",
+                    "template_v7rl8pj",
+                    emailParams
+                );
+                console.log('Confirmation email sent successfully');
+            } catch (emailError) {
+                console.error('Failed to send confirmation email:', emailError);
+            }
+
+            // Show success
+            document.getElementById('bookingIdDisplay').textContent = booking.bookingId;
+            bookingModal.style.display = 'none';
+            successModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            // Update room availability
+            await fetch(`${BASE_URL}/rooms/${currentRoom.roomId}/mark-unavailable`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            // Show success alert
+            showSuccessAlert('Room booked successfully! Confirmation email sent.');
+
+        } catch (error) {
+            console.error('Booking error:', error);
+            showError(error.message || 'Booking failed. Please try again.', errorDisplay);
+
+            // Attempt to cancel booking if it was created
+            if (booking && booking.bookingId) {
+                try {
+                    await fetch(`${BASE_URL}/bookings/${booking.bookingId}/cancel`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                } catch (cancelError) {
+                    console.error("Failed to cancel booking:", cancelError);
+                }
+            }
+        } finally {
+            submitButton.disabled = false;
+            loadingSpinner.style.display = 'none';
+        }
+    });
+
+    // Initialize the page
+    loadRooms();
+</script>
+</body>
+</html>
