@@ -783,11 +783,9 @@
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-    // Configuration
     const BASE_URL = "http://localhost:8080/api/v1";
     const stripe = Stripe('pk_test_51RDG7SFdrHPhbYtgQCnxE0qu5sRxQfbpYt6W21HMiSvMtQOnNllgkL7QYABFoPe5AsWjqUYjfH7clhq8Eaz6tvcN00XRAzQim2');
 
-    // Initialize Stripe Elements
     const elements = stripe.elements();
     const cardElement = elements.create('card', {
         style: {
@@ -806,10 +804,8 @@
         }
     });
 
-    // State management
     let currentRoom = null;
 
-    // DOM Elements
     const roomsContainer = document.getElementById('rooms-container');
     const bookingForm = document.getElementById('bookingForm');
     const bookingModal = document.getElementById('bookingModal');
@@ -818,7 +814,6 @@
     const errorDisplay = document.getElementById('card-errors');
     const hotelNameElement = document.getElementById('hotel-name');
 
-    // Add scroll effect to navbar
     window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
         if (window.scrollY > 50) {
@@ -828,7 +823,6 @@
         }
     });
 
-    // Fetch available rooms for the selected hotel
     async function getRoomsByHotel(hotelId) {
         try {
             const response = await fetch(`${BASE_URL}/rooms/rooms/${hotelId}?available=available`);
@@ -845,7 +839,6 @@
         }
     }
 
-    // Display rooms in the UI
     async function loadRooms() {
         try {
             const hotel = JSON.parse(sessionStorage.getItem('currentHotel'));
@@ -855,10 +848,8 @@
                 return;
             }
 
-            // Update UI with hotel name
             hotelNameElement.textContent = `${hotel.name} - Available Rooms`;
 
-            // Show loading state
             roomsContainer.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Loading rooms...</p>';
 
             const rooms = await getRoomsByHotel(hotel.id);
@@ -868,7 +859,6 @@
                 return;
             }
 
-            // Clear and render rooms
             roomsContainer.innerHTML = '';
 
             rooms.forEach(room => {
@@ -912,7 +902,6 @@
                 roomsContainer.appendChild(roomCard);
             });
 
-            // Add event listeners to all book buttons
             document.querySelectorAll('.book-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const roomId = e.target.dataset.roomId;
@@ -930,7 +919,6 @@
         }
     }
 
-    // Open booking modal with room details
     function openBookingModal(roomId, hotelId, price, roomType) {
         currentRoom = {
             roomId,
@@ -939,16 +927,13 @@
             roomType
         };
 
-        // Set hidden fields
         document.getElementById('roomId').value = roomId;
         document.getElementById('hotelId').value = hotelId;
 
-        // Set date constraints (today as minimum)
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('checkInDate').min = today;
         document.getElementById('checkOutDate').min = today;
 
-        // Clear previous values
         document.getElementById('guestEmail').value = '';
         document.getElementById('guestName').value = '';
         document.getElementById('guestPhone').value = '';
@@ -959,26 +944,21 @@
         errorDisplay.textContent = '';
         errorDisplay.style.display = 'none';
 
-        // Mount Stripe card element
         cardElement.mount('#card-element');
 
-        // Show modal
         bookingModal.style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 
-    // Close modals when clicking the × button
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
-            // Close both modals (they'll check their own visibility)
             bookingModal.style.display = 'none';
             successModal.style.display = 'none';
-            cardElement.unmount(); // Clean up Stripe element
+            cardElement.unmount();
             document.body.style.overflow = 'auto';
         });
     });
 
-    // Close modals when clicking outside content
     window.addEventListener('click', function(event) {
         if (event.target === bookingModal) {
             bookingModal.style.display = 'none';
@@ -991,13 +971,11 @@
         }
     });
 
-    // Close success modal
     function closeSuccessModal() {
         successModal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 
-    // Calculate booking amount based on dates
     document.getElementById("checkInDate").addEventListener("change", calculateAmount);
     document.getElementById("checkOutDate").addEventListener("change", calculateAmount);
 
@@ -1009,29 +987,24 @@
             const startDate = new Date(checkIn);
             const endDate = new Date(checkOut);
 
-            // Calculate difference in days
             const timeDiff = endDate.getTime() - startDate.getTime();
             const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-            // Ensure days is at least 1
             const numberOfNights = days > 0 ? days : 1;
             const amount = numberOfNights * currentRoom.price;
 
-            // Update the amount field
             document.getElementById("amount").value = `LKR ${amount.toLocaleString()} (${numberOfNights} night${numberOfNights > 1 ? 's' : ''})`;
             return amount;
         }
         return 0;
     }
 
-    // Show error message
     function showError(message, element = errorDisplay) {
         console.log('Attempting to show error:', message);
         element.textContent = message;
         element.style.display = 'block';
     }
 
-    // Show success alert
     function showSuccessAlert(message) {
         const alert = document.createElement('div');
         alert.className = 'alert-success';
@@ -1043,11 +1016,9 @@
         }, 3000);
     }
 
-    /*// Handle form submission
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Get form elements
         const submitButton = bookingForm.querySelector('button[type="submit"]');
         const guestEmail = document.getElementById('guestEmail').value.trim();
         const guestName = document.getElementById('guestName').value.trim();
@@ -1056,21 +1027,18 @@
         const checkOutDate = document.getElementById('checkOutDate').value;
         const guestCount = document.getElementById('guestCount').value;
 
-        // Show loading state
         submitButton.disabled = true;
         loadingSpinner.style.display = 'block';
         errorDisplay.textContent = '';
         errorDisplay.style.display = 'none';
 
         try {
-            // 1. Calculate the amount
             const amount = calculateAmount();
             if (amount <= 0) {
                 showError('Please select valid dates', errorDisplay);
                 return;
             }
 
-            // 2. Check if email exists
             const emailCheckResponse = await fetch(`${BASE_URL}/user/check-email?email=${encodeURIComponent(guestEmail)}`, {
                 method: 'GET',
                 headers: {
@@ -1088,7 +1056,6 @@
                 throw new Error('This email is not registered. Please sign up first.');
             }
 
-            // 3. Create booking
             const bookingPayload = {
                 userEmail: guestEmail,
                 bookingType: "ROOM",
@@ -1116,7 +1083,6 @@
 
             const booking = await bookingResponse.json();
 
-            // 4. Create payment intent
             const paymentAmount = Math.round(amount * 100);
             const paymentIntentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
                 method: 'POST',
@@ -1138,7 +1104,6 @@
 
             const paymentIntentData = await paymentIntentResponse.json();
 
-            // 5. Confirm payment with Stripe
             const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
                 paymentIntentData.clientSecret, {
                     payment_method: {
@@ -1154,7 +1119,6 @@
 
             if (stripeError) throw stripeError;
 
-            // 6. Confirm booking with payment
             const paymentDTO = {
                 amount: amount,
                 paymentMethod: "STRIPE",
@@ -1175,178 +1139,6 @@
                 throw new Error('Failed to confirm booking');
             }
 
-            // Show success
-            document.getElementById('bookingIdDisplay').textContent = booking.bookingId;
-            bookingModal.style.display = 'none';
-            successModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-
-            // Update room availability
-            await fetch(`${BASE_URL}/rooms/${currentRoom.roomId}/mark-unavailable`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-
-            // Show success alert
-            showSuccessAlert('Room booked successfully!');
-
-        } catch (error) {
-            console.error('Booking error:', error);
-            showError(error.message || 'Booking failed. Please try again.', errorDisplay);
-
-            // Attempt to cancel booking if it was created
-            if (booking && booking.bookingId) {
-                try {
-                    await fetch(`${BASE_URL}/bookings/${booking.bookingId}/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                        }
-                    });
-                } catch (cancelError) {
-                    console.error("Failed to cancel booking:", cancelError);
-                }
-            }
-        } finally {
-            submitButton.disabled = false;
-            loadingSpinner.style.display = 'none';
-        }
-    });*/
-
-    bookingForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Get form elements
-        const submitButton = bookingForm.querySelector('button[type="submit"]');
-        const guestEmail = document.getElementById('guestEmail').value.trim();
-        const guestName = document.getElementById('guestName').value.trim();
-        const guestPhone = document.getElementById('guestPhone').value.trim();
-        const checkInDate = document.getElementById('checkInDate').value;
-        const checkOutDate = document.getElementById('checkOutDate').value;
-        const guestCount = document.getElementById('guestCount').value;
-
-        // Show loading state
-        submitButton.disabled = true;
-        loadingSpinner.style.display = 'block';
-        errorDisplay.textContent = '';
-        errorDisplay.style.display = 'none';
-
-        try {
-            // 1. Calculate the amount
-            const amount = calculateAmount();
-            if (amount <= 0) {
-                showError('Please select valid dates', errorDisplay);
-                return;
-            }
-
-            // 2. Check if email exists
-            const emailCheckResponse = await fetch(`${BASE_URL}/user/check-email?email=${encodeURIComponent(guestEmail)}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-
-            if (!emailCheckResponse.ok) {
-                const error = await emailCheckResponse.json().catch(() => ({ message: 'Email verification failed' }));
-                throw new Error(error.message || 'Email verification failed');
-            }
-
-            const emailExists = await emailCheckResponse.json();
-            if (!emailExists) {
-                throw new Error('This email is not registered. Please sign up first.');
-            }
-
-            // 3. Create booking
-            const bookingPayload = {
-                userEmail: guestEmail,
-                bookingType: "ROOM",
-                roomId: currentRoom.roomId,
-                hotelId: currentRoom.hotelId,
-                startDate: checkInDate + "T00:00:00",
-                endDate: checkOutDate + "T00:00:00",
-                guestCount: parseInt(guestCount),
-                amount: amount
-            };
-
-            const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(bookingPayload)
-            });
-
-            if (!bookingResponse.ok) {
-                const errorText = await bookingResponse.text();
-                throw new Error(errorText || 'Failed to create booking');
-            }
-
-            const booking = await bookingResponse.json();
-
-            // 4. Create payment intent
-            const paymentAmount = Math.round(amount * 100);
-            const paymentIntentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    amount: paymentAmount,
-                    currency: 'lkr',
-                    receipt_email: guestEmail,
-                    metadata: { bookingId: booking.bookingId }
-                })
-            });
-
-            if (!paymentIntentResponse.ok) {
-                throw new Error('Failed to create payment intent');
-            }
-
-            const paymentIntentData = await paymentIntentResponse.json();
-
-            // 5. Confirm payment with Stripe
-            const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
-                paymentIntentData.clientSecret, {
-                    payment_method: {
-                        card: cardElement,
-                        billing_details: {
-                            name: guestName,
-                            email: guestEmail,
-                            phone: guestPhone
-                        }
-                    }
-                }
-            );
-
-            if (stripeError) throw stripeError;
-
-            // 6. Confirm booking with payment
-            const paymentDTO = {
-                amount: amount,
-                paymentMethod: "STRIPE",
-                transactionId: paymentIntent.id,
-                status: "COMPLETED"
-            };
-
-            const confirmResponse = await fetch(`${BASE_URL}/bookings/${booking.bookingId}/confirm`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(paymentDTO)
-            });
-
-            if (!confirmResponse.ok) {
-                throw new Error('Failed to confirm booking');
-            }
-
-            // 7. Send confirmation email
             try {
                 const emailParams = {
                     to_email: guestEmail,
@@ -1371,13 +1163,11 @@
                 console.error('Failed to send confirmation email:', emailError);
             }
 
-            // Show success
             document.getElementById('bookingIdDisplay').textContent = booking.bookingId;
             bookingModal.style.display = 'none';
             successModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
 
-            // Update room availability
             await fetch(`${BASE_URL}/rooms/${currentRoom.roomId}/mark-unavailable`, {
                 method: 'PUT',
                 headers: {
@@ -1385,14 +1175,12 @@
                 }
             });
 
-            // Show success alert
             showSuccessAlert('Room booked successfully! Confirmation email sent.');
 
         } catch (error) {
             console.error('Booking error:', error);
             showError(error.message || 'Booking failed. Please try again.', errorDisplay);
 
-            // Attempt to cancel booking if it was created
             if (booking && booking.bookingId) {
                 try {
                     await fetch(`${BASE_URL}/bookings/${booking.bookingId}/cancel`, {
@@ -1411,7 +1199,6 @@
         }
     });
 
-    // Initialize the page
     loadRooms();
 </script>
 </body>

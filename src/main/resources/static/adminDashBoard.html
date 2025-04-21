@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #3498db;
+            --primary: #34db3c;
             --secondary: #2c3e50;
             --success: #2ecc71;
             --warning: #f1c40f;
@@ -327,16 +327,13 @@
             return;
         }
 
-        // Fetch dashboard data
         fetchDashboardData(token);
 
-        // Set up navigation
         setupNavigation();
     });
 
     async function fetchDashboardData(token) {
         try {
-            // Fetch all data in parallel
             const [usersRes, hotelsRes, roomsRes, taxisRes, packagesRes, activityRes] = await Promise.all([
                 fetch('http://localhost:8080/api/v1/user/count', {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -358,12 +355,10 @@
                 })
             ]);
 
-            // Check all responses
             if (!usersRes.ok || !hotelsRes.ok || !roomsRes.ok || !taxisRes.ok || !packagesRes.ok || !activityRes.ok) {
                 throw new Error('Failed to fetch dashboard data');
             }
 
-            // Parse all responses
             const [usersData, hotelsData, roomsData, taxisData, packagesData, activityData] = await Promise.all([
                 usersRes.json(),
                 hotelsRes.json(),
@@ -373,7 +368,6 @@
                 activityRes.json()
             ]);
 
-            // Update the UI with the fetched data
             updateDashboardUI(usersData, hotelsData, roomsData, taxisData, packagesData, activityData);
 
         } catch (error) {
@@ -387,7 +381,6 @@
     }
 
     function updateDashboardUI(users, hotels, rooms, taxis, packages, activity) {
-        // Update counts
         document.getElementById('totalUsers').textContent = users.count || 0;
         document.getElementById('totalHotels').textContent = hotels.count || 0;
         document.getElementById('totalRooms').textContent = rooms.count || 0;
@@ -401,10 +394,8 @@
             console.error('Error parsing user data:', e);
         }
 
-        // Display name or fallback to email
         const userName = userData.name || userData.email || 'Admin';
         document.getElementById('loggedInUser').textContent = `Welcome, ${userName}`;
-        // Update recent activity
         const activityList = document.getElementById('recentActivityList');
         activityList.innerHTML = '';
 
@@ -417,7 +408,6 @@
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
 
-            // Determine icon based on activity type
             let icon = 'fa-bell';
             if (item.type === 'user') icon = 'fa-user';
             else if (item.type === 'hotel') icon = 'fa-hotel';
@@ -440,11 +430,10 @@
     }
 
     function setupNavigation() {
-        // Add click handlers for logout
         document.querySelector('.sidebar ul li:last-child').addEventListener('click', function() {
             localStorage.removeItem('token');
             localStorage.removeItem('userData');
-            window.location.href = 'login.html';
+            window.location.href = 'index.html#login-modal';
         });
     }
 </script>

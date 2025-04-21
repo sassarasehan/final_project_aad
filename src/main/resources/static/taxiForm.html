@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taxi Management System</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
@@ -281,11 +278,8 @@
     </div>
 </div>
 
-<!-- Bootstrap JS Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- Custom JS -->
 <script>
     const API_BASE_URL = 'http://localhost:8080/api/v1/taxi';
     let taxiModal = new bootstrap.Modal(document.getElementById('taxiModal'));
@@ -294,13 +288,11 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadTaxis();
 
-        // Image preview handler
         document.getElementById('image').addEventListener('change', function(e) {
             const preview = document.getElementById('imagePreview');
             const file = this.files[0];
 
             if (file) {
-                // Validate image file type
                 const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
                 if (!validTypes.includes(file.type)) {
                     this.classList.add('is-invalid');
@@ -349,7 +341,6 @@
             }
         });
 
-        // Validate image file if one is selected
         const imageInput = document.getElementById('image');
         if (imageInput.files.length > 0) {
             const file = imageInput.files[0];
@@ -369,7 +360,6 @@
         if (validateForm()) {
             saveTaxi();
         } else {
-            // Scroll to the first invalid field
             const firstInvalid = document.querySelector('.is-invalid');
             if (firstInvalid) {
                 firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -440,7 +430,6 @@
             input.classList.remove('is-invalid');
         });
 
-        // Get next taxi ID
         fetch(`${API_BASE_URL}/nextTaxiId`)
             .then(response => response.text())
             .then(id => {
@@ -481,7 +470,6 @@
         const url = isEdit ? `${API_BASE_URL}/update/${taxiId}` : `${API_BASE_URL}/save`;
         const method = isEdit ? 'PUT' : 'POST';
 
-        // Show loading state
         const saveButtonText = document.getElementById('saveButtonText');
         const saveSpinner = document.getElementById('saveSpinner');
         saveButtonText.textContent = isEdit ? 'Updating...' : 'Saving...';

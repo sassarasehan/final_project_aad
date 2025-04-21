@@ -73,10 +73,9 @@ public class BookingServiceImpl implements BookingService {
         booking.setStartDate(bookingDTO.getStartDate());
         booking.setEndDate(bookingDTO.getEndDate());
         booking.setGuestCount(bookingDTO.getGuestCount());
-        booking.setAmount(bookingDTO.getAmount()); // Make sure to set the amount
+        booking.setAmount(bookingDTO.getAmount());
 
 
-        // Handle different booking types
         switch (bookingDTO.getBookingType()) {
             case "HOTEL":
                 Hotel hotel = hotelRepository.findById(bookingDTO.getHotelId())
@@ -88,12 +87,10 @@ public class BookingServiceImpl implements BookingService {
                 Room room = roomRepository.findById(bookingDTO.getRoomId())
                         .orElseThrow(() -> new ExpressionException("Room not found"));
 
-                // Check room availability
                 if (!"available".equalsIgnoreCase(room.getAvailable())) {
                     throw new ExpressionException("Room is not available");
                 }
 
-                // Check for date conflicts
                 boolean hasConflict = bookingRepository.existsByRoomAndStatusAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
                         room,
                         "CONFIRMED",
@@ -126,7 +123,6 @@ public class BookingServiceImpl implements BookingService {
                 throw new IllegalArgumentException("Invalid booking type");
         }
 
-        // Save the booking
         Booking savedBooking = bookingRepository.save(booking);
         return modelMapper.map(savedBooking, BookingDTO.class);
     }
@@ -136,12 +132,10 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ExpressionException("Booking not found"));
 
-        // Validate booking can be confirmed
         if (!"PENDING".equals(booking.getStatus())) {
             throw new ExpressionException("Booking cannot be confirmed - invalid status");
         }
 
-        // Create and save payment
         Payment payment = new Payment();
         payment.setPaymentId("PAY-" + UUID.randomUUID().toString().substring(0, 8));
         payment.setAmount(paymentDTO.getAmount());
@@ -153,12 +147,10 @@ public class BookingServiceImpl implements BookingService {
 
         paymentRepository.save(payment);
 
-        // Update booking status and link payment
         booking.setStatus("CONFIRMED");
         booking.setPayment(payment);
         bookingRepository.save(booking);
 
-        // Mark resources as unavailable if applicable
         switch (booking.getBookingType()) {
             case "ROOM":
                 Room room = booking.getRoom();
@@ -189,11 +181,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
-    @Scheduled(cron = "0 0 3 * * ?") // Runs daily at 3 AM
+    @Scheduled(cron = "0 0 3 * * ?")
     public void updateResourceAvailability() {
         LocalDateTime now = LocalDateTime.now();
 
-        // Update rooms availability for completed bookings
         bookingRepository.findByStatusAndEndDateLessThanAndResourceMarkedAvailable("CONFIRMED", now, false)
                 .forEach(booking -> {
                     if (booking.getRoom() != null) {

@@ -112,7 +112,7 @@ public class HotelController {
         Path imagePath = Paths.get(IMAGE_DIRECTORY, imageName);
         byte[] imageBytes = Files.readAllBytes(imagePath);
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // or MediaType.IMAGE_PNG
+                .contentType(MediaType.IMAGE_JPEG)
                 .body(imageBytes);
     }
 

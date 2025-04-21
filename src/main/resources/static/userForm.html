@@ -1,311 +1,3 @@
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h2, h3 {
-            color: #007BFF;
-        }
-
-        /* Form Styling */
-        form {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            width: 50%;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            background-color: #ffffff;
-            color: #333;
-            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        input:focus {
-            border-color: #007BFF;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-
-        /* Buttons */
-        button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-            margin: 5px;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        button[type="button"] {
-            background-color: #007BFF;
-            color: white;
-        }
-
-        button.delete {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        button.edit {
-            background-color: #ffc107;
-            color: white;
-        }
-
-        /* Table Styling */
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: #ffffff;
-        }
-
-        tbody tr:hover {
-            background-color: #f1f3f5;
-        }
-    </style>
-</head>
-<body>
-
-<h2>User Management</h2>
-
-<form id="userForm">
-    <input type="hidden" id="uid">
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <input type="text" id="name" placeholder="Name" required>
-    <input type="text" id="role" placeholder="Role" required>
-    <button type="button" onclick="saveUser()">Save</button>
-</form>
-
-<h3>Users List</h3>
-<table>
-    <thead>
-    <tr>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Role</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody id="userTable"></tbody>
-</table>
-
-&lt;!&ndash;<script>
-    const apiBaseUrl = "http://localhost:8080/api/v1/user";
-
-    function fetchUsers() {
-        axios.get(`${apiBaseUrl}/get`)
-            .then(response => {
-                const users = response.data;
-                let tableRows = "";
-                users.forEach(user => {
-                    tableRows += `
-                            <tr>
-                                <td>${user.email}</td>
-                                <td>${user.name}</td>
-                                <td>${user.role}</td>
-                                <td>
-                                    <button class="edit" onclick="editUser('${user.email}', '${user.name}', '${user.role}')">Edit</button>
-                                    <button class="delete" onclick="deleteUser('${user.email}')">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                });
-                document.getElementById("userTable").innerHTML = tableRows;
-            })
-            .catch(error => console.error("Error fetching users:", error));
-    }
-
-    function saveUser() {
-        const user = {
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value,
-            name: document.getElementById("name").value,
-            role: document.getElementById("role").value
-        };
-
-        axios.post(`${apiBaseUrl}/register`, user)
-            .then(response => {
-                alert("User saved successfully!");
-                fetchUsers();
-            })
-            .catch(error => alert("Error saving user: " + error.response.data.message));
-    }
-
-    function deleteUser(email) {
-        if (confirm("Are you sure you want to delete this user?")) {
-            axios.delete(`${apiBaseUrl}/delete/${email}`)
-                .then(response => {
-                    alert("User deleted successfully!");
-                    fetchUsers();
-                })
-                .catch(error => alert("Error deleting user: " + error.response.data.message));
-        }
-    }
-
-    function editUser(email, name, role) {
-        document.getElementById("email").value = email;
-        document.getElementById("name").value = name;
-        document.getElementById("role").value = role;
-    }
-
-    fetchUsers();  // Load users on page load
-</script>&ndash;&gt;
-
-<script>
-    const apiBaseUrl = "http://localhost:8080/api/v1/user";
-    let isEditing = false;  // Track if we're updating a user
-    let email = "";  // Store the email of the user being edited
-
-    function fetchUsers() {
-        axios.get(`${apiBaseUrl}/get`)
-            .then(response => {
-                const users = response.data;
-                let tableRows = "";
-                users.forEach(user => {
-                    tableRows += `
-                        <tr>
-                            <td>${user.email}</td>
-                            <td>${user.name}</td>
-                            <td>${user.role}</td>
-                            <td>
-                                <button class="edit" onclick="editUser('${user.email}', '${user.name}', '${user.role}')">Edit</button>
-                                <button class="delete" onclick="deleteUser('${user.email}')">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                document.getElementById("userTable").innerHTML = tableRows;
-            })
-            .catch(error => console.error("Error fetching users:", error));
-    }
-
-    function saveUser() {
-        if (isEditing) {
-            updateUser();
-        } else {
-            const user = {
-                email: document.getElementById("email").value,
-                password: document.getElementById("password").value,
-                name: document.getElementById("name").value,
-                role: document.getElementById("role").value
-            };
-
-            axios.post(`${apiBaseUrl}/register`, user)
-                .then(response => {
-                    alert("User saved successfully!");
-                    resetForm();
-                    fetchUsers();
-                })
-                .catch(error => alert("Error saving user: " + error.response.data.message));
-        }
-    }
-
-    function updateUser() {
-        const updatedUser = {
-            email: document.getElementById("email").value, // Keep email as it is
-            password: document.getElementById("password").value,
-            name: document.getElementById("name").value,
-            role: document.getElementById("role").value
-        };
-
-        axios.put(`${apiBaseUrl}/update/${editingEmail}`, updatedUser)
-            .then(response => {
-                alert("User updated successfully!");
-                resetForm();
-                fetchUsers();
-            })
-            .catch(error => alert("Error updating user: " + error.response.data.message));
-    }
-
-    function editUser(email, name, role) {
-        document.getElementById("email").value = email;
-        document.getElementById("name").value = name;
-        document.getElementById("role").value = role;
-        document.getElementById("password").value = "";  // Keep password empty for security
-
-        isEditing = true;
-        editingEmail = email;
-
-        // Change button to "Update"
-        document.querySelector("button[type='button']").innerText = "Update";
-        document.querySelector("button[type='button']").style.backgroundColor = "#28A745";
-    }
-
-    function deleteUser(email) {
-        if (confirm("Are you sure you want to delete this user?")) {
-            axios.delete(`${apiBaseUrl}/delete/${email}`)
-                .then(response => {
-                    alert("User deleted successfully!");
-                    fetchUsers();
-                })
-                .catch(error => alert("Error deleting user: " + error.response.data.message));
-        }
-    }
-
-    function resetForm() {
-        document.getElementById("email").value = "";
-        document.getElementById("password").value = "";
-        document.getElementById("name").value = "";
-        document.getElementById("role").value = "";
-
-        isEditing = false;
-        editingEmail = "";
-
-        // Change button back to "Save"
-        document.querySelector("button[type='button']").innerText = "Save";
-        document.querySelector("button[type='button']").style.backgroundColor = "#007BFF";
-    }
-
-    fetchUsers();  // Load users on page load
-</script>
-
-
-</body>
-</html>
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -317,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4361ee;
+            --primary: #93ee43;
             --primary-light: #e0e7ff;
             --secondary: #3f37c9;
             --success: #4cc9f0;
@@ -654,7 +346,6 @@
     let isEditing = false;
     let editingEmail = "";
 
-    // Regular expressions for validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const nameRegex = /^[a-zA-Z\s]{2,}$/;
@@ -709,13 +400,11 @@
     }
 
     function validateAndSaveUser() {
-        // Get input values
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         const name = document.getElementById("name").value.trim();
         const role = document.getElementById("role").value.trim();
 
-        // Reset previous errors
         resetErrors();
 
         // Validate inputs
@@ -823,12 +512,10 @@
         isEditing = true;
         editingEmail = email;
 
-        // Change button to "Update"
         const saveButton = document.querySelector("button[type='button']");
         saveButton.innerHTML = `<span class="material-icons">update</span> Update`;
         saveButton.className = "btn btn-success";
 
-        // Scroll to form
         document.getElementById("userForm").scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -901,11 +588,9 @@
         errorFields.forEach(el => el.classList.remove('error'));
     }
 
-    // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
         fetchUsers();
 
-        // Add input event listeners for real-time validation
         document.getElementById('email').addEventListener('input', function() {
             if (!emailRegex.test(this.value.trim())) {
                 showError('email', 'Please enter a valid email address');

@@ -59,8 +59,7 @@ public class TaxiBookingServiceImpl implements TaxiBookingService {
         booking.setTaxi(taxi);
         booking.setUser(user);
 
-        // Set fare (simple example for calculation)
-        booking.setFare(10.0); // You can calculate based on distance, time, etc.
+        booking.setFare(10.0);
 
         taxiBookingRepository.save(booking);
         return new TaxiBookingDTO(booking.getTaxiBookingId(), booking.getPickupTime(), booking.getPickupLocation(), booking.getDropOffLocation(),

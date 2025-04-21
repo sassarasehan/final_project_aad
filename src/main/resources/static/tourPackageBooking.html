@@ -1,884 +1,3 @@
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taxi Booking - TravelEase</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Navigation */
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .logo span {
-            color: #4CAF50;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 50vh;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: white;
-            margin-top: 60px;
-        }
-
-        .hero-content h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
-
-        /* Taxis Section */
-        .section {
-            padding: 3rem 0;
-        }
-
-        .bg-light {
-            background-color: #f9f9f9;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-            color: #333;
-        }
-
-        .taxis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .taxi-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .taxi-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .taxi-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid #eee;
-        }
-
-        .taxi-info {
-            padding: 1.5rem;
-        }
-
-        .taxi-info h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-            color: #333;
-        }
-
-        .taxi-meta {
-            color: #666;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .taxi-price {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #4CAF50;
-            margin: 1rem 0;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        }
-
-        .btn-secondary {
-            background-color: #666;
-        }
-
-        .btn-secondary:hover {
-            background-color: #555;
-        }
-
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            animation: modalopen 0.4s ease-out;
-        }
-
-        @keyframes modalopen {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            color: #333;
-        }
-
-        .close {
-            color: #aaa;
-            font-size: 1.75rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .close:hover {
-            color: #333;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-        }
-
-        .form-row {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        /* Payment Section */
-        .payment-section {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #eee;
-        }
-
-        .payment-title {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        #card-element {
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            background: white;
-        }
-
-        #card-errors {
-            color: #e74c3c;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        /* Loading spinner */
-        .spinner {
-            display: none;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid #4CAF50;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 1.5rem auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Success Modal */
-        .success-icon {
-            font-size: 4rem;
-            color: #4CAF50;
-            margin-bottom: 1rem;
-        }
-
-        .success-message {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            color: #555;
-        }
-
-        .booking-id {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: #f0f0f0;
-            border-radius: 5px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .modal-content {
-                margin: 10% auto;
-                padding: 1.5rem;
-                width: 95%;
-            }
-
-            .form-row {
-                flex-direction: column;
-            }
-        }
-
-        /* Alert */
-        .alert-success {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            z-index: 9999;
-            animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-    </style>
-</head>
-<body>
-&lt;!&ndash; Navigation &ndash;&gt;
-<nav class="navbar">
-    <div class="container">
-        <a href="index.html" class="logo">Travel<span>Ease</span></a>
-        <div class="nav-links">
-            <a href="index.html">Hotels</a>
-            <a href="taxiBooking.html">Taxis</a>
-            <a href="index.html#tours">Tours</a>
-            <a href="bookings.html" id="myBookingsLink">My Bookings</a>
-            <button class="btn" id="authBtn">Login</button>
-        </div>
-    </div>
-</nav>
-
-&lt;!&ndash; Hero Section &ndash;&gt;
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <h1>Taxi Services</h1>
-            <p>Book your ride with comfort and convenience</p>
-        </div>
-    </div>
-</section>
-
-&lt;!&ndash; Tour Packages &ndash;&gt;
-<section id="tours" class="section">
-    <div class="container">
-        <h2 class="section-title">Popular Tour Packages</h2>
-        <div class="tours-grid" id="tours-container">
-            &lt;!&ndash; Tours will be loaded here via JavaScript &ndash;&gt;
-        </div>
-    </div>
-</section>
-
-&lt;!&ndash; Booking Modal &ndash;&gt;
-<div id="bookingModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Book Your Taxi</h2>
-            <span class="close">&times;</span>
-        </div>
-
-        <form id="bookingForm">
-            <input type="hidden" id="packageId">
-
-            <div class="form-group" style="flex: 1;">
-                <label for="checkInDate">Check-in Date</label>
-                <input type="date" id="checkInDate" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="guestCount">Number of Guests</label>
-                <input type="number" id="guestCount" class="form-control" required
-                       min="1" value="1">
-            </div>
-            <div class="form-group">
-                <label for="amount">Amount (LKR)</label>
-                <input type="number" id="amount" class="form-control" required
-                       placeholder="Enter amount" min="1" step="0.01">
-            </div>
-
-            <div class="payment-section">
-                <h3 class="payment-title">Payment Information</h3>
-                <div id="card-element"></div>
-                <div id="card-errors" role="alert"></div>
-            </div>
-
-            <button type="submit" class="btn">
-                Complete Booking
-            </button>
-            <div class="spinner" id="loadingSpinner"></div>
-        </form>
-    </div>
-</div>
-
-&lt;!&ndash; Success Modal &ndash;&gt;
-<div id="successModal" class="modal">
-    <div class="modal-content" style="text-align: center;">
-        <span class="close">&times;</span>
-        <i class="fas fa-check-circle success-icon"></i>
-        <h2 class="modal-title">Booking Confirmed!</h2>
-        <p class="success-message">Your tour package has been successfully booked.</p>
-        <p>Booking Reference:</p>
-        <div class="booking-id" id="bookingIdDisplay"></div>
-        <p class="success-message">A confirmation has been sent to your email.</p>
-        <button class="btn" onclick="closeSuccessModal()">Close</button>
-    </div>
-</div>
-
-<script src="https://js.stripe.com/v3/"></script>
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-    const BASE_URL = "http://localhost:8080/api/v1";
-    const stripe = Stripe('pk_test_51RDG7SFdrHPhbYtgQCnxE0qu5sRxQfbpYt6W21HMiSvMtQOnNllgkL7QYABFoPe5AsWjqUYjfH7clhq8Eaz6tvcN00XRAzQim2');
-
-    // Initialize Stripe Elements
-    const elements = stripe.elements();
-    const cardElement = elements.create('card', {
-        style: {
-            base: {
-                fontSize: '16px',
-                color: '#32325d',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        }
-    });
-
-    // DOM Elements
-    const toursContainer = document.getElementById('tours-container');
-    const bookingForm = document.getElementById('bookingForm');
-    const bookingModal = document.getElementById('bookingModal');
-    const successModal = document.getElementById('successModal');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const errorDisplay = document.getElementById('card-errors');
-    const authBtn = document.getElementById('authBtn');
-    const closeButtons = document.querySelectorAll('.close');
-
-    // State
-    let currentPackageId = null;
-    let currentUserEmail = localStorage.getItem('userEmail');
-
-    // Initialize the page
-    document.addEventListener('DOMContentLoaded', () => {
-        checkAuthStatus();
-        loadTours();
-        cardElement.mount('#card-element');
-
-        // Set minimum date for pickup
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('checkInDate').min = today;
-
-        // Event listeners
-        authBtn.addEventListener('click', handleAuth);
-        bookingForm.addEventListener('submit', handleBookingSubmit);
-        closeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                bookingModal.style.display = 'none';
-                successModal.style.display = 'none';
-            });
-        });
-
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === bookingModal) bookingModal.style.display = 'none';
-            if (e.target === successModal) successModal.style.display = 'none';
-        });
-    });
-
-    // Check authentication status
-    function checkAuthStatus() {
-        const token = localStorage.getItem('token');
-        currentUserEmail = localStorage.getItem('userEmail');
-        if (token) {
-            authBtn.textContent = 'Logout';
-            document.getElementById('myBookingsLink').style.display = 'block';
-        } else {
-            authBtn.textContent = 'Login';
-            document.getElementById('myBookingsLink').style.display = 'none';
-        }
-    }
-
-    // Handle authentication
-    function handleAuth() {
-        const token = localStorage.getItem('token');
-        if (token) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userEmail');
-            checkAuthStatus();
-            showAlert('Logged out successfully');
-        } else {
-            window.location.href = 'login.html';
-        }
-    }
-
-    // Load Tours into DOM
-    async function loadTours() {
-        try {
-            const response = await fetch(`${BASE_URL}/tour-packages/getAll`);
-            const tours = await response.json();
-
-            if (!response.ok) {
-                throw new Error('Failed to load tours');
-            }
-
-            toursContainer.innerHTML = '';
-
-            if (tours.length === 0) {
-                toursContainer.innerHTML = '<p>No tours available at the moment.</p>';
-                return;
-            }
-
-            tours.forEach(tour => {
-                const tourCard = document.createElement('div');
-                tourCard.className = 'tour-card';
-                tourCard.innerHTML = `
-                    <img src="../static/${tour.image || 'tour-default.jpg'}" alt="${tour.packageName || 'Tour Image'}">
-                    <div class="tour-info">
-                        <h3>${tour.packageName || 'Tour Package'}</h3>
-                        <p class="tour-meta">${tour.description || 'Explore amazing destinations'}</p>
-                        <p class="tour-meta"><strong>Price:</strong> LKR ${tour.price || 5000}</p>
-                        <p class="tour-meta"><strong>Duration:</strong> ${tour.duration || '1 Day'}</p>
-                        <button class="btn book-btn" onclick="openBookingModal('${tour.packageId}', ${tour.price || 5000}, '${tour.packageName}')">Book Now</button>
-                    </div>
-                `;
-                toursContainer.appendChild(tourCard);
-            });
-        } catch (error) {
-            console.error('Error loading tours:', error);
-            toursContainer.innerHTML = '<p>Error loading tours. Please try again later.</p>';
-        }
-    }
-
-    // Open booking modal
-    function openBookingModal(packageId, amount, packageName) {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            showAlert('Please login to book a tour');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        currentPackageId = packageId;
-        document.getElementById('packageId').value = packageId;
-        document.getElementById('amount').value = amount;
-        document.querySelector('.modal-title').textContent = `Book ${packageName}`;
-        bookingModal.style.display = 'block';
-    }
-
-    // Handle booking submission for TOUR
-    // Handle booking submission for TOUR - UPDATED VERSION
-    /*async function handleBookingSubmit(e) {
-        e.preventDefault();
-        loadingSpinner.style.display = 'block';
-        errorDisplay.textContent = '';
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-            showAlert('Please login to book');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        // Get user data from localStorage
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.email) {
-            showAlert('User information missing. Please login again.');
-            return;
-        }
-
-        try {
-            // Prepare dates - assuming 1 day duration for tours
-            const startDate = new Date(document.getElementById('checkInDate').value);
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + 1); // Add 1 day for end date
-
-            const formData = {
-                packageId: document.getElementById('packageId').value,
-                startDate: startDate.toISOString(),
-                endDate: endDate.toISOString(),
-                amount: parseFloat(document.getElementById('amount').value),
-                guestCount: parseInt(document.getElementById('guestCount').value),
-                userEmail: user.email,
-                bookingType: "TOUR"
-            };
-
-            // 1. Create the booking first
-            const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!bookingResponse.ok) {
-                const errorData = await bookingResponse.json();
-                throw new Error(errorData.message || 'Failed to create booking');
-            }
-
-            const booking = await bookingResponse.json();
-
-            // 2. Create payment intent
-            const paymentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    amount: formData.amount , // Convert to cents
-                    currency: 'lkr',
-                    receipt_email: user.email
-                })
-            });
-
-            if (!paymentResponse.ok) {
-                throw new Error('Failed to create payment intent');
-            }
-
-            const { clientSecret } = await paymentResponse.json();
-
-            // 3. Confirm card payment
-            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                    billing_details: {
-                        name: user.name,
-                        email: user.email
-                    }
-                }
-            });
-
-            if (error) {
-                throw error;
-            }
-
-            // 4. Confirm booking with payment
-            const confirmResponse = await fetch(`${BASE_URL}/bookings/${booking.bookingId}/confirm`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    amount: formData.amount,
-                    paymentMethod: 'STRIPE',
-                    transactionId: paymentIntent.id
-                    // Don't include status here - let backend handle it
-                })
-            });
-
-            if (!confirmResponse.ok) {
-                throw new Error('Failed to confirm booking');
-            }
-
-            // Update success modal for tour booking
-            document.querySelector('.modal-title').textContent = 'Tour Booking Confirmed!';
-            document.querySelector('.success-message').textContent = 'Your tour has been successfully booked.';
-            showSuccessModal(booking.bookingId);
-
-        } catch (error) {
-            console.error('Booking error:', error);
-            errorDisplay.textContent = error.message || 'An error occurred during booking';
-        } finally {
-            loadingSpinner.style.display = 'none';
-        }
-    }
-
-    // Update openBookingModal to properly handle tours
-    function openBookingModal(packageId, amount, packageName) {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            showAlert('Please login to book a tour');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        currentPackageId = packageId;
-        document.getElementById('packageId').value = packageId;
-        document.getElementById('amount').value = amount;
-        document.querySelector('.modal-title').textContent = `Book Tour: ${packageName}`;
-        bookingModal.style.display = 'block';
-    }
-
-    function showSuccessModal(bookingId) {
-        bookingModal.style.display = 'none';
-        document.getElementById('bookingIdDisplay').textContent = bookingId;
-        successModal.style.display = 'block';
-    }
-
-    function closeSuccessModal() {
-        successModal.style.display = 'none';
-    }*/// Handle booking submission for TOUR - FINAL WORKING VERSION
-    async function handleBookingSubmit(e) {
-        e.preventDefault();
-        loadingSpinner.style.display = 'block';
-        errorDisplay.textContent = '';
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-            showAlert('Please login to book');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user?.email) {
-            showAlert('User information missing');
-            return;
-        }
-
-        try {
-            // Prepare dates
-            const startDate = new Date(document.getElementById('checkInDate').value);
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + 1);
-
-            const formData = {
-                packageId: document.getElementById('packageId').value,
-                startDate: startDate.toISOString(),
-                endDate: endDate.toISOString(),
-                amount: parseFloat(document.getElementById('amount').value),
-                guestCount: parseInt(document.getElementById('guestCount').value),
-                userEmail: user.email,
-                bookingType: "TOUR"
-            };
-
-            // 1. Create booking
-            const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!bookingResponse.ok) throw new Error('Booking creation failed');
-            const booking = await bookingResponse.json();
-
-            // 2. Create payment intent
-            const paymentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    amount: formData.amount,
-                    currency: 'lkr',
-                    receipt_email: user.email
-                })
-            });
-
-            if (!paymentResponse.ok) throw new Error('Payment intent failed');
-            const { clientSecret } = await paymentResponse.json();
-
-            // 3. Confirm payment
-            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                    billing_details: {
-                        name: user.name,
-                        email: user.email
-                    }
-                }
-            });
-
-            if (error) throw error;
-
-            // 4. Confirm booking
-            const confirmResponse = await fetch(`${BASE_URL}/bookings/${booking.bookingId}/confirm`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    amount: formData.amount,
-                    paymentMethod: 'STRIPE',
-                    transactionId: paymentIntent.id
-                })
-            });
-
-            if (!confirmResponse.ok) throw new Error('Confirmation failed');
-
-            // Show success
-            showSuccessModal(booking.bookingId);
-
-        } catch (error) {
-            console.error('Booking error:', error);
-            errorDisplay.textContent = error.message || 'Booking failed. Please try again.';
-        } finally {
-            loadingSpinner.style.display = 'none';
-        }
-    }
-
-    // Ensure these functions exist
-    function showSuccessModal(bookingId) {
-        bookingModal.style.display = 'none';
-        document.getElementById('bookingIdDisplay').textContent = bookingId;
-        successModal.style.display = 'block';
-    }
-
-    function closeSuccessModal() {
-        successModal.style.display = 'none';
-        // Optional: Reset form
-        bookingForm.reset();
-    }
-
-    function showAlert(message) {
-        const alert = document.createElement('div');
-        alert.className = 'alert-success';
-        alert.innerHTML = `
-        <i class="fas fa-check-circle"></i>
-        <span>${message}</span>
-    `;
-        document.body.appendChild(alert);
-        setTimeout(() => alert.remove(), 3000);
-    }
-</script>
-</body>
-</html>-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1651,7 +770,6 @@
     const BASE_URL = "http://localhost:8080/api/v1";
     const stripe = Stripe('pk_test_51RDG7SFdrHPhbYtgQCnxE0qu5sRxQfbpYt6W21HMiSvMtQOnNllgkL7QYABFoPe5AsWjqUYjfH7clhq8Eaz6tvcN00XRAzQim2');
 
-    // Initialize Stripe Elements
     const elements = stripe.elements();
     const cardElement = elements.create('card', {
         style: {
@@ -1670,7 +788,6 @@
         }
     });
 
-    // DOM Elements
     const toursContainer = document.getElementById('tours-container');
     const bookingForm = document.getElementById('bookingForm');
     const bookingModal = document.getElementById('bookingModal');
@@ -1681,7 +798,6 @@
     const closeButtons = document.querySelectorAll('.close');
     const modalTourTitle = document.getElementById('modalTourTitle');
 
-    // Form validation patterns
     const validationPatterns = {
         checkInDate: {
             validate: (value) => {
@@ -1697,28 +813,22 @@
         }
     };
 
-    // State
     let currentTour = null;
 
-    // Initialize the page
     document.addEventListener('DOMContentLoaded', () => {
         checkAuthStatus();
         loadTours();
         cardElement.mount('#card-element');
 
-        // Set minimum date for tour
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('checkInDate').min = today;
 
-        // Initialize form validation
         initFormValidation();
 
-        // Calculate amount when guests or date changes
         document.getElementById('guestCount').addEventListener('change', calculateAmount);
         document.getElementById('checkInDate').addEventListener('change', calculateAmount);
     });
 
-    // Calculate total amount
     function calculateAmount() {
         const guestCount = parseInt(document.getElementById('guestCount').value) || 1;
         const basePrice = parseFloat(document.getElementById('packagePrice').value) || 0;
@@ -1727,18 +837,14 @@
         return totalAmount;
     }
 
-    // Initialize form validation
     function initFormValidation() {
-        // Validate on blur
         document.getElementById('checkInDate').addEventListener('blur', () => validateField('checkInDate'));
         document.getElementById('guestCount').addEventListener('blur', () => validateField('guestCount'));
 
-        // Validate on input for better UX
         document.getElementById('guestCount').addEventListener('input', () => validateField('guestCount', false));
     }
 
-    // Validate form field
-    function validateField(fieldId, showError = true) {
+   function validateField(fieldId, showError = true) {
         const field = document.getElementById(fieldId);
         const errorElement = document.getElementById(`${fieldId}Error`);
         const value = field.value.trim();
@@ -1769,7 +875,6 @@
         return isValid || value === '';
     }
 
-    // Validate entire form
     function validateForm() {
         let isValid = true;
         const fields = ['checkInDate', 'guestCount'];
@@ -1792,7 +897,6 @@
         return isValid;
     }
 
-    // Check authentication status
     function checkAuthStatus() {
         const token = localStorage.getItem('token');
         if (token) {
@@ -1806,7 +910,6 @@
         }
     }
 
-    // Auth button click handler
     authBtn.addEventListener('click', () => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -1821,7 +924,6 @@
         }
     });
 
-    // Close modal handlers
     closeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             bookingModal.style.display = 'none';
@@ -1830,7 +932,6 @@
         });
     });
 
-    // Close modal when clicking outside
     window.addEventListener('click', (e) => {
         if (e.target === bookingModal) {
             bookingModal.style.display = 'none';
@@ -1842,13 +943,11 @@
         }
     });
 
-    // Close success modal
     function closeSuccessModal() {
         successModal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 
-    // Load available tours
     async function loadTours() {
         try {
             toursContainer.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Loading tours...</p>';
@@ -1907,9 +1006,7 @@
         }
     }
 
-    // Open booking modal
     function openBookingModal(packageId, price, packageName) {
-        // Check if user is logged in
         const token = localStorage.getItem('token');
         if (!token) {
             showAlert('error', 'Please login to book a tour');
@@ -1919,17 +1016,14 @@
 
         currentTour = { packageId, price, packageName };
 
-        // Set tour details in form
         document.getElementById('packageId').value = packageId;
         document.getElementById('packagePrice').value = price;
         modalTourTitle.textContent = `Book ${packageName}`;
 
-        // Reset form
         document.getElementById('checkInDate').value = '';
         document.getElementById('guestCount').value = '1';
         calculateAmount();
 
-        // Clear errors
         document.querySelectorAll('.error-message').forEach(el => {
             el.style.display = 'none';
         });
@@ -1939,22 +1033,18 @@
         errorDisplay.textContent = '';
         errorDisplay.style.display = 'none';
 
-        // Show modal
         bookingModal.style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 
-    // Handle form submission
     async function handleBookingSubmit(e) {
         e.preventDefault();
 
-        // Validate form
         if (!validateForm()) {
             showAlert('error', 'Please fix the errors in the form');
             return;
         }
 
-        // Get form values
         const packageId = document.getElementById('packageId').value;
         const checkInDate = document.getElementById('checkInDate').value;
         const guestCount = document.getElementById('guestCount').value;
@@ -1962,7 +1052,6 @@
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user'));
 
-        // Show loading state
         const submitBtn = bookingForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         loadingSpinner.style.display = 'block';
@@ -1974,7 +1063,6 @@
                 throw new Error('Please login to book a tour');
             }
 
-            // Prepare dates
             const startDate = new Date(checkInDate);
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 1); // Assume 1-day tour
@@ -1989,7 +1077,6 @@
                 userEmail: user.email
             };
 
-            // 1. Create booking
             const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
                 method: 'POST',
                 headers: {
@@ -2006,7 +1093,6 @@
 
             const bookingData = await bookingResponse.json();
 
-            // 2. Create payment intent
             const paymentIntentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
                 method: 'POST',
                 headers: {
@@ -2027,7 +1113,6 @@
 
             const paymentIntentData = await paymentIntentResponse.json();
 
-            // 3. Confirm payment with Stripe
             const { paymentIntent, error } = await stripe.confirmCardPayment(
                 paymentIntentData.clientSecret, {
                     payment_method: {
@@ -2044,7 +1129,6 @@
                 throw error;
             }
 
-            // 4. Confirm booking with payment
             const paymentDTO = {
                 amount: amount,
                 paymentMethod: "STRIPE",
@@ -2065,12 +1149,11 @@
                 throw new Error('Failed to confirm booking');
             }
 
-            // Show success
             document.getElementById('bookingIdDisplay').textContent = bookingData.bookingId;
             bookingModal.style.display = 'none';
             successModal.style.display = 'block';
 
-            // Show success alert
+
             showAlert('success', 'Tour booked successfully!');
 
         } catch (error) {
@@ -2099,7 +1182,6 @@
         }, 3000);
     }
 
-    // Attach form submit handler
     bookingForm.addEventListener('submit', handleBookingSubmit);
 </script>
 </body>

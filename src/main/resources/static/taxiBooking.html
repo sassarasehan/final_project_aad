@@ -807,7 +807,6 @@
     const BASE_URL = "http://localhost:8080/api/v1";
     const stripe = Stripe('pk_test_51RDG7SFdrHPhbYtgQCnxE0qu5sRxQfbpYt6W21HMiSvMtQOnNllgkL7QYABFoPe5AsWjqUYjfH7clhq8Eaz6tvcN00XRAzQim2');
 
-    // Initialize Stripe Elements
     const elements = stripe.elements();
     const cardElement = elements.create('card', {
         style: {
@@ -826,7 +825,6 @@
         }
     });
 
-    // DOM Elements
     const taxisContainer = document.getElementById('taxis-container');
     const bookingForm = document.getElementById('bookingForm');
     const bookingModal = document.getElementById('bookingModal');
@@ -836,7 +834,6 @@
     const authBtn = document.getElementById('authBtn');
     const closeButtons = document.querySelectorAll('.close');
 
-    // Form validation patterns
     const validationPatterns = {
         pickupLocation: {
             regex: /^[a-zA-Z0-9\s,'-]{3,}$/,
@@ -869,26 +866,20 @@
         }
     };
 
-    // State
     let currentTaxi = null;
 
-    // Initialize the page
     document.addEventListener('DOMContentLoaded', () => {
         checkAuthStatus();
         loadTaxis();
         cardElement.mount('#card-element');
 
-        // Set minimum date for pickup
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('pickupDate').min = today;
 
-        // Initialize form validation
         initFormValidation();
     });
 
-    // Initialize form validation
     function initFormValidation() {
-        // Validate on blur
         document.getElementById('pickupLocation').addEventListener('blur', () => validateField('pickupLocation'));
         document.getElementById('destination').addEventListener('blur', () => validateField('destination'));
         document.getElementById('pickupDate').addEventListener('change', () => validateField('pickupDate'));
@@ -896,13 +887,11 @@
         document.getElementById('passengers').addEventListener('change', () => validateField('passengers'));
         document.getElementById('amount').addEventListener('blur', () => validateField('amount'));
 
-        // Validate on input for better UX
         document.getElementById('pickupLocation').addEventListener('input', () => validateField('pickupLocation', false));
         document.getElementById('destination').addEventListener('input', () => validateField('destination', false));
         document.getElementById('amount').addEventListener('input', () => validateField('amount', false));
     }
 
-    // Validate form field
     function validateField(fieldId, showError = true) {
         const field = document.getElementById(fieldId);
         const errorElement = document.getElementById(`${fieldId}Error`);
@@ -934,7 +923,6 @@
         return isValid || value === '';
     }
 
-    // Validate entire form
     function validateForm() {
         let isValid = true;
         const fields = ['pickupLocation', 'destination', 'pickupDate', 'pickupTime', 'passengers', 'amount'];
@@ -957,7 +945,6 @@
         return isValid;
     }
 
-    // Check authentication status
     function checkAuthStatus() {
         const token = localStorage.getItem('token');
         if (token) {
@@ -971,7 +958,6 @@
         }
     }
 
-    // Auth button click handler
     authBtn.addEventListener('click', () => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -985,7 +971,6 @@
         }
     });
 
-    // Close modal handlers
     closeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             bookingModal.style.display = 'none';
@@ -994,7 +979,6 @@
         });
     });
 
-    // Close modal when clicking outside
     window.addEventListener('click', (e) => {
         if (e.target === bookingModal) {
             bookingModal.style.display = 'none';
@@ -1006,13 +990,11 @@
         }
     });
 
-    // Close success modal
     function closeSuccessModal() {
         successModal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 
-    // Load available taxis
     async function loadTaxis() {
         try {
             taxisContainer.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Loading taxis...</p>';
@@ -1063,7 +1045,6 @@
                 taxisContainer.appendChild(taxiCard);
             });
 
-            // Add event listeners to book buttons
             document.querySelectorAll('.book-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const taxiId = e.target.dataset.taxiId;
@@ -1078,9 +1059,7 @@
         }
     }
 
-    // Open booking modal
     async function openBookingModal(taxiId) {
-        // Check if user is logged in
         const token = localStorage.getItem('token');
         if (!token) {
             showAlert('error', 'Please login to book a taxi');
@@ -1089,7 +1068,6 @@
         }
 
         try {
-            // Fetch taxi details
             const response = await fetch(`${BASE_URL}/taxi/getTaxiId/${taxiId}`);
             const taxi = await response.json();
 
@@ -1099,10 +1077,8 @@
 
             currentTaxi = taxi;
 
-            // Set taxi ID in form
             document.getElementById('taxiId').value = taxiId;
 
-            // Clear form and errors
             document.getElementById('pickupLocation').value = '';
             document.getElementById('destination').value = '';
             document.getElementById('pickupDate').value = '';
@@ -1112,17 +1088,14 @@
             errorDisplay.textContent = '';
             errorDisplay.style.display = 'none';
 
-            // Clear all error messages
             document.querySelectorAll('.error-message').forEach(el => {
                 el.style.display = 'none';
             });
 
-            // Clear error classes
             document.querySelectorAll('.form-control').forEach(el => {
                 el.classList.remove('error');
             });
 
-            // Show modal
             bookingModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
 
@@ -1132,17 +1105,14 @@
         }
     }
 
-    // Handle form submission
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Validate form
         if (!validateForm()) {
             showAlert('error', 'Please fix the errors in the form');
             return;
         }
 
-        // Get form values
         const taxiId = document.getElementById('taxiId').value;
         const pickupLocation = document.getElementById('pickupLocation').value.trim();
         const destination = document.getElementById('destination').value.trim();
@@ -1151,7 +1121,6 @@
         const passengers = document.getElementById('passengers').value;
         const amount = document.getElementById('amount').value;
 
-        // Show loading state
         const submitBtn = bookingForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         loadingSpinner.style.display = 'block';
@@ -1164,12 +1133,11 @@
                 throw new Error('Please login to book a taxi');
             }
 
-            // Create booking payload
             const bookingPayload = {
                 bookingType: "TAXI",
                 taxiId: taxiId,
                 startDate: `${pickupDate}T${pickupTime}:00`,
-                endDate: `${pickupDate}T${pickupTime}:00`, // Same as start for taxi
+                endDate: `${pickupDate}T${pickupTime}:00`,
                 guestCount: parseInt(passengers),
                 amount: parseFloat(amount),
                 pickupLocation: pickupLocation,
@@ -1177,7 +1145,6 @@
                 userEmail: JSON.parse(localStorage.getItem('user')).email
             };
 
-            // 1. Create booking
             const bookingResponse = await fetch(`${BASE_URL}/bookings/book`, {
                 method: 'POST',
                 headers: {
@@ -1194,7 +1161,6 @@
 
             const bookingData = await bookingResponse.json();
 
-            // 2. Create payment intent
             const paymentIntentResponse = await fetch(`${BASE_URL}/payments/create-payment-intent`, {
                 method: 'POST',
                 headers: {
@@ -1202,7 +1168,7 @@
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    amount: parseFloat(amount) * 100, // in cents
+                    amount: parseFloat(amount) * 100,
                     currency: "lkr",
                     receipt_email: JSON.parse(localStorage.getItem('user')).email,
                     metadata: { bookingId: bookingData.bookingId }
@@ -1215,7 +1181,6 @@
 
             const paymentIntentData = await paymentIntentResponse.json();
 
-            // 3. Confirm payment with Stripe
             const { paymentIntent, error } = await stripe.confirmCardPayment(
                 paymentIntentData.clientSecret, {
                     payment_method: {
@@ -1232,7 +1197,6 @@
                 throw error;
             }
 
-            // 4. Confirm booking with payment
             const paymentDTO = {
                 amount: parseFloat(amount),
                 paymentMethod: "STRIPE",
@@ -1253,7 +1217,6 @@
                 throw new Error('Failed to confirm booking');
             }
 
-            // 5. Mark taxi as unavailable
             await fetch(`${BASE_URL}/taxi/${taxiId}/mark-unavailable`, {
                 method: 'PUT',
                 headers: {
@@ -1261,15 +1224,12 @@
                 }
             });
 
-            // Show success
             document.getElementById('bookingIdDisplay').textContent = bookingData.bookingId;
             bookingModal.style.display = 'none';
             successModal.style.display = 'block';
 
-            // Show success alert
             showAlert('success', 'Taxi booked successfully!');
 
-            // Reload taxis to update availability
             loadTaxis();
 
         } catch (error) {
@@ -1283,7 +1243,6 @@
         }
     });
 
-    // Show alert message
     function showAlert(type, message) {
         const alert = document.createElement('div');
         alert.className = `alert alert-${type}`;
